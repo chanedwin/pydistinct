@@ -47,3 +47,6 @@ method_of_moments_v3_estimator(uniform["sample"])
 * Include automatic techniques to convert strings to integers
 
 ## References
+
+Haas, P. J., Naughton, J. F., Seshadri, S., & Stokes, L. (1995, September). Sampling-based estimation of the number of distinct values of an attribute. In VLDB (Vol. 95, pp. 311-322).
+
