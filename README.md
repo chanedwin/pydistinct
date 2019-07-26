@@ -1,6 +1,6 @@
 # Distinct Value Estimators
 
-This package provides statistical estimators to predict a population's total number of distinct values D from a sample sequence of those values. In essence : given a sample of n values from a population N with d distinct values, predict the total number of distinct values D that exists in the population.
+This package provides statistical estimators to predict a population's total number of distinct values D from a sample sequence. In essence : given a sample of n values from a population N (with only d distinct values seen), predict the total number of distinct values D that exists in the population.
 
 Use cases : 
 * estimating the number of unique insects in a population from a field sample,
