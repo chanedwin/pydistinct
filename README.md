@@ -1,9 +1,9 @@
 # Pydistinct - Estimators for population distinct values from samples
 
-This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population.
+This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population. 
 
 Sample use cases :
-* estimating the number of unique insects in a population from a field sample,
+* estimating the number of unique insects in a population from a field sample
 * estimating the number of unique items in a database from a sample 
 
 This package is based on work from Haas et al, 1995 with estimators from Goodman 1949, Ozsoyoglu et al., 1991, Chao 1984, Chao and Lee 1992, Shlosser 1981, Sichel 1986a, 1986b and 1992,Bunge and Fitzpatrick 1993, Smith and Van Bell 1984, Sarndal,
@@ -11,9 +11,25 @@ Swensson, and Wretman 1992, Burnham and Overton 1979.
  
 It provides a python implementation for the statistical estimators in Haas as well as an XGB ensemble estimator to predict the total number [In progress].
 
-Edge Case : Where all values seen are unique, no statistical method works, and the methods fall back to the birthday problem solution. In this solution, we estimate the number of distinct values D given that no two values drawn are unique.
-See [birthday solution](https://en.wikipedia.org/wiki/Birthday_problem)
-The solution iteratively computes the probability of the observed sequence given D number of unique values. The probability of the birthday solution can be tweaked to be more conservative or aggressive -
+## Estimators available (Haas et al, 1995) : 
+* goodmans_estimator : Implementation of Goodman's estimator (Goodman 1949), unique unbiased estimator of D
+* chao_estimator : Implementation of Chao's estimator (Chao 1984), using counts of values that appear exactly once and twice
+* jackknife_estimator : Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
+* chao_lee_estimator : Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage 
+* shlossers_estimator : Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
+* sichel_estimator : Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992) which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
+* method_of_moments_estimator : Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
+* bootstrap_estimator : Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
+* horvitz_thompson_estimator : Implementation of the Horvitz-Thompson Estimator to estimate D (Sarndal,
+Swensson, and Wretman 1992; Haas et al, 1995)
+* method_of_moments_v2_estimator : Method-of-Moments Estimator with equal frequency assumption while still sampling from a finite relation (Haas et al, 1995)
+* method_of_moments_v3_estimator : Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
+* smoothed_jackknife_estimator : Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
+* hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
+
+Edge Case : Where all values seen are unique (d unique values in sequence of length d), no statistical method works and the methods fall back to a special case of [birthday problem](https://en.wikipedia.org/wiki/Birthday_problem) with no collisions. In this problem, we try different values of the distinct values in the population (D), and estimate the probability that we draw d unique values from it with no collision. Intuitively, if our sample contains 10 unique values, then D is more likely to be 100 than 10. If we set a posterior probability (default 0.1), we can then compute the smallest value for D where the probability is greater than 0.1. You can tweak the probability of the birthday solution to get the lower bound (around 0.1) or an upper bound estimate (something like 0.9) of D.
+
+Computation of N (population size):
 
 ## Requirements
 
@@ -36,22 +52,6 @@ horvitz_thompson_estimator(uniform["sample"])
 method_of_moments_v3_estimator(uniform["sample"])
 >>> 709.4574356684974
 ```
-
-## Estimators available : 
-* goodmans_estimator : Implementation of Goodman's estimator from Goodman 1949, unique unbiased estimator of D
-* chao_estimator : Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
-* chao_lee_estimator :
-* jackknife_estimator
-* sichel_estimator
-* bootstrap_estimator
-* method_of_moments_estimator
-* shlossers_estimator
-* horvitz_thompson_estimator
-* method_of_moments_estimator
-* method_of_moments_v2_estimator
-* method_of_moments_v3_estimator
-* smoothed_jackknife_estimator
-* hybrid_estimator
 
 
 ## Additional planned work
@@ -87,3 +87,7 @@ Sichel, H. S. (1986). Word frequency distributions and type-token characteristic
 Sichel, H. S. (1992). Anatomy of the generalized inverse Gaussian-Poisson distribution with special applications to bibliometric studies. Information Processing & Management, 28(1), 5-17.
 
 Smith, E. P., & van Belle, G. (1984). Nonparametric estimation of species richness. Biometrics, 119-129.
+
+## Special Thanks
+
+Ng Keng Hwee (
