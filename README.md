@@ -18,7 +18,7 @@ numpy, statsmodels, scipy, xgboost (Experimental)
 
 ## Usage
 
-```
+```python
 from pydistinct.stats_estimators import *
 sequence = [1,2,2,3]
 horvitz_thompson_estimator(sequence)
