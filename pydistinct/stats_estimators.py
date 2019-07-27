@@ -9,7 +9,7 @@ from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _
 
 def goodmans_estimator(sequence):
     """
-    Implementation of goodmans estimator : throws an error if N is too high due to numerical complexity
+    Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to numerical complexity
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -47,7 +47,10 @@ def goodmans_estimator(sequence):
 
 def chao_estimator(sequence):
     """
-    d_chao = d + f1^2/(2f2)
+
+    Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
+
+    d_chao = d + (f_1)^2/(2*(f_2))
     returns birthday problem solution if there are no sequences observed of frequency 2 (ie each distinct value observed is never seen again)
 
     also makes insane bets (10x) when every point observed is almost unique. could be good or bad

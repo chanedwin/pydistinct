@@ -1,18 +1,23 @@
 # Distinct Value Estimators
 
-This package provides statistical estimators to predict a population's total number of distinct values D from a sample sequence. In essence : given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population.
+This package provides statistical estimators to predict a population's total number of distinct values D from a sample sequence. Given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population.
 
-Use cases : 
+Sample use cases :
 * estimating the number of unique insects in a population from a field sample,
 * estimating the number of unique items in a database from a sample 
 
 This package is based on work from Haas et al, 1995 with estimators from Goodman 1949, Ozsoyoglu et al., 1991, Chao 1984, Chao and Lee 1992, Shlosser 1981, Sichel 1986a, 1986b and 1992,Bunge and Fitzpatrick 1993, Smith and Van Bell 1984, Sarndal,
 Swensson, and Wretman 1992, Burnham and Overton 1979.
  
-It provides a python implementation for the statistical estimators in Haas as well as an XGB ensemble estimator 
-to predict the total number [In progress].
+It provides a python implementation for the statistical estimators in Haas as well as an XGB ensemble estimator to predict the total number [In progress].
 
-Use case : Given a sample of integers with d distinct values, predict the total number of distinct values D within a population 
+Edge Case : Where all values seen are unique, no statistical method works, and the methods fall back to the birthday problem solution. In this solution, we estimate the number of distinct values D given that no two values drawn are unique.
+See [birthday solution](https://en.wikipedia.org/wiki/Birthday_problem)
+The solution iteratively computes the probability of the observed sequence given D number of unique values. The probability of the birthday solution can be tweaked to be more conservative or aggressive -
+
+## Requirements
+
+numpy, statsmodels, scipy, xgboost (Experimental)
 
 ## Installation
 
@@ -33,20 +38,20 @@ method_of_moments_v3_estimator(uniform["sample"])
 ```
 
 ## Estimators available : 
-* goodmans_estimator : 
-* chao_estimator : 
-* chao_lee_estimator : 
-* jackknife_estimator : 
-* sichel_estimator :
-* bootstrap_estimator :
-* method_of_moments_estimator :
-* shlossers_estimator :
-* horvitz_thompson_estimator :
-* method_of_moments_estimator :
-* method_of_moments_v2_estimator :
-* method_of_moments_v3_estimator :
-* smoothed_jackknife_estimator :
-* hybrid_estimator : 
+* goodmans_estimator : Implementation of Goodman's estimator from Goodman 1949, unique unbiased estimator of D
+* chao_estimator : Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
+* chao_lee_estimator :
+* jackknife_estimator
+* sichel_estimator
+* bootstrap_estimator
+* method_of_moments_estimator
+* shlossers_estimator
+* horvitz_thompson_estimator
+* method_of_moments_estimator
+* method_of_moments_v2_estimator
+* method_of_moments_v3_estimator
+* smoothed_jackknife_estimator
+* hybrid_estimator
 
 
 ## Additional planned work
