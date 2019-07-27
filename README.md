@@ -1,6 +1,6 @@
 # Pydistinct - Estimators for distinct values in population from a sample
 
-This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population.  
+This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample sequence of n values with only d distinct values, predict the total number of distinct values D that exists in the population N.  
 
 Sample use cases :
 * estimating the number of unique insects in a population from a field sample
@@ -8,13 +8,13 @@ Sample use cases :
 * estimating the number of unique items in a database from a few sample rows
 
 
-## Requirements
-
-numpy, statsmodels, scipy, xgboost (Experimental)
-
 ## Installation
 
 pip install pydistinct
+
+### Requirements
+
+numpy, statsmodels, scipy, xgboost (Experimental)
 
 ## Usage
 
