@@ -1,9 +1,5 @@
-import logging
-
 import math
 import numpy as np
-
-logger = logging.getLogger()
 
 
 def _check_iterable(sequence):
@@ -69,7 +65,7 @@ def _compute_birthday_problem_probability(sequence: np.ndarray, lower_bound_prob
     :return: estimated lower bound for distinct number of integers
     :rtype: int
     """
-    logger.warning(
+    print(
         "Using collision probability to compute lower bound of distinct count ie min(n) for which P(n) > 0.01")
     d = len(set(sequence))
     i = d
