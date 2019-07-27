@@ -52,23 +52,24 @@ smoothed_jackknife_estimator(sequence)
 ```
 
 ## Estimators available (Haas et al, 1995) : 
+
 This package is based on work from Haas et al, 1995 with estimators from Goodman 1949, Ozsoyoglu et al., 1991, Chao 1984, Chao and Lee 1992, Shlosser 1981, Sichel 1986a, 1986b and 1992,Bunge and Fitzpatrick 1993, Smith and Van Bell 1984, Sarndal,
 Swensson, and Wretman 1992, Burnham and Overton 1979.
- 
-* goodmans_estimator : Implementation of Goodman's estimator (Goodman 1949), unique unbiased estimator of D
-* chao_estimator : Implementation of Chao's estimator (Chao 1984), using counts of values that appear exactly once and twice
-* jackknife_estimator : Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
-* chao_lee_estimator : Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage 
-* shlossers_estimator : Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
-* sichel_estimator : Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992) which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
-* method_of_moments_estimator : Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
-* bootstrap_estimator : Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
-* horvitz_thompson_estimator : Implementation of the Horvitz-Thompson Estimator to estimate D (Sarndal,
+
+* **goodmans_estimator** : Implementation of Goodman's estimator (Goodman 1949), unique unbiased estimator of D
+* **chao_estimator** : Implementation of Chao's estimator (Chao 1984), using counts of values that appear exactly once and twice
+* **jackknife_estimator** : Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
+* **chao_lee_estimator** : Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage 
+* **shlossers_estimator** : Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
+* **sichel_estimator** : Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992) which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
+* **method_of_moments_estimator** : Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
+* **bootstrap_estimator** : Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
+* **horvitz_thompson_estimator** : Implementation of the Horvitz-Thompson Estimator to estimate D (Sarndal,
 Swensson, and Wretman 1992; Haas et al, 1995)
-* method_of_moments_v2_estimator : Method-of-Moments Estimator with equal frequency assumption while still sampling from a finite relation (Haas et al, 1995)
-* method_of_moments_v3_estimator : Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
-* smoothed_jackknife_estimator : Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
-* hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
+* **method_of_moments_v2_estimator** : Method-of-Moments Estimator with equal frequency assumption while still sampling from a finite relation (Haas et al, 1995)
+* **method_of_moments_v3_estimator** : Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
+* **smoothed_jackknife_estimator** : Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
+* **hybrid_estimator** : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
 
 
 ## Complexities
