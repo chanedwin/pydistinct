@@ -81,7 +81,7 @@ In most real world problems, the population size N will not be known - all that 
 
 ## Additional planned work
 
-* Include automatic techniques to convert strings to integers
+* Include ensemble learning to improve on estimator predictions
 
 ## References
 
