@@ -40,17 +40,27 @@ numpy, statsmodels, scipy, xgboost (Experimental)
 pip install pydistinct
 
 ## Usage
+
+Currently, all the estimators only take in sequences of inte
 ```
 from pydistinct.stats_estimators import *
-uniform = sampling.sample_gaussian(200,1000,500)
+sequence = [1,2,2,3]
+horvitz_thompson_estimator(sequence)
+>>> 3.9923808687325613
+
+from pydistinct.sampling import sample_uniform
+uniform = sample_uniform(n_distinct_integers=1000, sample_size=500) # sample 500 values from a uniform distribution of 1000 integers
 print(uniform)
->>> {"sample":[-252, -238, -109.. 302, 122], 'sample_distinct': 359, 'ground_truth': 552}
+>>> {'ground_truth': 1000, # population distinct values
+ 'sample': array([ 50, 883, 190,... 797, 453, 867]), # 500 sampled values 
+ 'sample_distinct': 396} # only 396 distinct values in sample
+ 
 bootstrap_estimator(uniform["sample"])
->>> 463.7695215710723
+>>> 520.6409023638918 
 horvitz_thompson_estimator(uniform["sample"])
->>> 519.6486453398398
-method_of_moments_v3_estimator(uniform["sample"])
->>> 709.4574356684974
+>>> 588.8990980951648
+smoothed_jackknife_estimator(uniform["sample"])
+>>> 1057.1495560288624
 ```
 
 
