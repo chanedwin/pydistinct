@@ -54,8 +54,7 @@ smoothed_jackknife_estimator(sequence)
 
 ## Estimators available (Haas et al, 1995) : 
 
-This package is based on work from Haas et al, 1995 with estimators from Goodman 1949, Ozsoyoglu et al., 1991, Chao 1984, Chao and Lee 1992, Shlosser 1981, Sichel 1986a, 1986b and 1992,Bunge and Fitzpatrick 1993, Smith and Van Bell 1984, Sarndal,
-Swensson, and Wretman 1992, Burnham and Overton 1979.
+This package is based on work from Haas et al, 1995.
 
 * **goodmans_estimator** : Implementation of Goodman's estimator (Goodman 1949), unique unbiased estimator of D
 * **chao_estimator** : Implementation of Chao's estimator (Chao 1984), using counts of values that appear exactly once and twice
