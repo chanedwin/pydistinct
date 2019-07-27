@@ -11,25 +11,6 @@ Swensson, and Wretman 1992, Burnham and Overton 1979.
  
 It provides a python implementation for the statistical estimators in Haas as well as an XGB ensemble estimator to predict the total number [In progress].
 
-## Estimators available (Haas et al, 1995) : 
-* goodmans_estimator : Implementation of Goodman's estimator (Goodman 1949), unique unbiased estimator of D
-* chao_estimator : Implementation of Chao's estimator (Chao 1984), using counts of values that appear exactly once and twice
-* jackknife_estimator : Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
-* chao_lee_estimator : Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage 
-* shlossers_estimator : Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
-* sichel_estimator : Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992) which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
-* method_of_moments_estimator : Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
-* bootstrap_estimator : Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
-* horvitz_thompson_estimator : Implementation of the Horvitz-Thompson Estimator to estimate D (Sarndal,
-Swensson, and Wretman 1992; Haas et al, 1995)
-* method_of_moments_v2_estimator : Method-of-Moments Estimator with equal frequency assumption while still sampling from a finite relation (Haas et al, 1995)
-* method_of_moments_v3_estimator : Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
-* smoothed_jackknife_estimator : Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
-* hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
-
-Edge Case : Where all values seen are unique (d unique values in sequence of length d), no statistical method works and the methods fall back to a special case of [birthday problem](https://en.wikipedia.org/wiki/Birthday_problem) with no collisions. In this problem, we try different values of the distinct values in the population (D), and estimate the probability that we draw d unique values from it with no collision. Intuitively, if our sample contains 10 unique values, then D is more likely to be 100 than 10. If we set a posterior probability (default 0.1), we can then compute the smallest value for D where the probability is greater than 0.1. You can tweak the probability of the birthday solution to get the lower bound (around 0.1) or an upper bound estimate (something like 0.9) of D.
-
-Computation of N (population size):
 
 ## Requirements
 
@@ -63,6 +44,27 @@ smoothed_jackknife_estimator(uniform["sample"])
 >>> 1057.1495560288624
 ```
 
+## Estimators available (Haas et al, 1995) : 
+* goodmans_estimator : Implementation of Goodman's estimator (Goodman 1949), unique unbiased estimator of D
+* chao_estimator : Implementation of Chao's estimator (Chao 1984), using counts of values that appear exactly once and twice
+* jackknife_estimator : Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
+* chao_lee_estimator : Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage 
+* shlossers_estimator : Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
+* sichel_estimator : Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992) which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
+* method_of_moments_estimator : Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
+* bootstrap_estimator : Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
+* horvitz_thompson_estimator : Implementation of the Horvitz-Thompson Estimator to estimate D (Sarndal,
+Swensson, and Wretman 1992; Haas et al, 1995)
+* method_of_moments_v2_estimator : Method-of-Moments Estimator with equal frequency assumption while still sampling from a finite relation (Haas et al, 1995)
+* method_of_moments_v3_estimator : Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
+* smoothed_jackknife_estimator : Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
+* hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
+
+
+## Complexities
+Edge Case : Where all values seen are unique (d unique values in sequence of length d), no statistical method works and the methods fall back to a special case of [birthday problem](https://en.wikipedia.org/wiki/Birthday_problem) with no collisions. In this problem, we try different values of the distinct values in the population (D), and estimate the probability that we draw d unique values from it with no collision. Intuitively, if our sample contains 10 unique values, then D is more likely to be 100 than 10. If we set a posterior probability (default 0.1), we can then compute the smallest value for D where the probability is greater than 0.1. You can tweak the probability of the birthday solution to get the lower bound (around 0.1) or an upper bound estimate (something like 0.9) of D.
+
+Computation of N (population size):
 
 ## Additional planned work
 
