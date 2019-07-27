@@ -1,6 +1,6 @@
-# Pydistinct - Estimators for population distinct values from samples
+# Pydistinct - Estimators for distinct values in population from a sample
 
-This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population. 
+This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample of n values with only d distinct values from a population N, predict the total number of distinct values D that exists in the population.  
 
 Sample use cases :
 * estimating the number of unique insects in a population from a field sample
@@ -25,7 +25,7 @@ horvitz_thompson_estimator(sequence)
 >>> 3.9923808687325613
 
 from pydistinct.sampling import sample_uniform
-uniform = sample_uniform(n_distinct_integers=1000, sample_size=500) # sample 500 values from a uniform distribution of 1000 integers
+uniform = sample_uniform(n_distinct_integers=1000, sample_size=500) # sample 500 values from a distribution of 1000 integers with uniform probability
 print(uniform)
 >>> {'ground_truth': 1000, # population distinct values
  'sample': array([ 50, 883, 190,... 797, 453, 867]), # 500 sampled values 
@@ -39,7 +39,7 @@ smoothed_jackknife_estimator(uniform["sample"])
 >>> 1057.1495560288624
 
 
-#Currently, all the estimators only take in sequences of integers. You will need to use a label encoder to convert strings to integers.
+# Currently, all the estimators only take in sequences of integers. You will need to use a label encoder to convert strings to integers.
 from sklearn import preprocessing
 le = preprocessing.LabelEncoder()
 my_string = ['two', 'roads', 'diverged', ... 'in', 'the', 'undergrowth'] # first paragraph of Robert Frost's The Road Not Taken
