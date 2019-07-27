@@ -1,15 +1,18 @@
 import math
+
 import numpy as np
 from scipy.optimize import broyden1, broyden2
 from scipy.stats import chi2
 
-from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, h_x, \
+from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, \
+    h_x, \
     memoized_h_x, _check_iterable
 
 
 def goodmans_estimator(sequence):
     """
-    Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to numerical complexity
+    Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to
+    numerical complexity
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -51,7 +54,8 @@ def chao_estimator(sequence):
     Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
 
     d_chao = d + (f_1)^2/(2*(f_2))
-    returns birthday problem solution if there are no sequences observed of frequency 2 (ie each distinct value observed is never seen again)
+    returns birthday problem solution if there are no sequences observed of frequency 2
+    (ie each distinct value observed is never seen again)
 
     also makes insane bets (10x) when every point observed is almost unique. could be good or bad
 
@@ -77,10 +81,10 @@ def chao_estimator(sequence):
 
 def jackknife_estimator(sequence):
     """
-    D^hat_c_j = d_n - (n - l)(d_(n-1)- d_n).
-    need to double check
+    Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
+    good at regimes where sample size is close to actual number of points
 
-    #good at regimes where sample size is close to actual number of points
+    D^hat_c_j = d_n - (n - l)(d_(n-1)- d_n).
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -113,9 +117,9 @@ def jackknife_estimator(sequence):
 
 def chao_lee_estimator(sequence):
     """
-    gamma hat is an estimator for the squared coefficient of variation of the frequencies
+    Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage
 
-    #check the gamma estimator
+    gamma hat is an estimator for the squared coefficient of variation of the frequencies
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -147,10 +151,9 @@ def chao_lee_estimator(sequence):
 
 def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None):
     """
+    Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
 
-    Hard to determine q (probability of being included)
-
-    @KengHwee
+    Note : Hard to determine q (probability of being included)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -193,10 +196,10 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None):
 
 def sichel_estimator(sequence):
     """
-    could change solution finding method, currently using newton raphson method
-    can be optimised (training rate, stopping value)
+    Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992)
+    which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
 
-    use broyden 1 to solve, search linear space for good solution
+    implementation uses broyden 2 to solve and search linear space for good solution
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -243,18 +246,12 @@ def sichel_estimator(sequence):
 
 def method_of_moments_estimator(sequence):
     """
+    Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
     can be optimised (training rate, stopping value)
 
     d = d_moments(l -  e^(-n))/d_moments)
 
     solve for d_moments in d = d_moments(l -  e^(-n))/d_moments)
-
-        d/d_moments = 1 -e^(-n))/d_moments
-        d(d)/d(d_moments) = 1*(-e^(-n/d_moments)) + d_moments((1/d_moments^2)*e(-n/d_moments))
-        f(g) = (1+g)ln(g) - Ag + B
-        guess g as  g = (f1/n + 1) / 2
-        next_g = g - f(g)/f'(g)
-
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -293,7 +290,9 @@ def method_of_moments_estimator(sequence):
 
 def bootstrap_estimator(sequence):
     """
-        DBoot = d + sigma (1-nj/n)^n
+    Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
+
+    DBoot = d + sigma (1-nj/n)^n
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -320,7 +319,9 @@ def bootstrap_estimator(sequence):
 
 def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
-    n = length of sequence
+    Implementation of the Horvitz-Thompson Estimator to estimate D
+    (Sarndal, Swensson, and Wretman 1992; Haas et al, 1995)
+
     n_j = attribute count of value j
 
     :param sequence: sample sequence of integers
@@ -358,6 +359,8 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
 
 def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000, n_pop=None):
     """
+    Method-of-Moments Estimator with equal frequency assumption while still sampling
+     from a finite relation (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -446,6 +449,7 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
 
 def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+    Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -500,6 +504,7 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
 
 def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+    Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -544,6 +549,8 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
 
 def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+    hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife
+    estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
