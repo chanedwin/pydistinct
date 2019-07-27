@@ -4,6 +4,7 @@ This package provides statistical estimators to predict a population's total num
 
 Sample use cases :
 * estimating the number of unique insects in a population from a field sample
+* estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a sample 
 
 This package is based on work from Haas et al, 1995 with estimators from Goodman 1949, Ozsoyoglu et al., 1991, Chao 1984, Chao and Lee 1992, Shlosser 1981, Sichel 1986a, 1986b and 1992,Bunge and Fitzpatrick 1993, Smith and Van Bell 1984, Sarndal,
