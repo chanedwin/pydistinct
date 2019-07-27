@@ -39,16 +39,17 @@ smoothed_jackknife_estimator(uniform["sample"])
 >>> 1057.1495560288624
 
 
-# Currently, all the estimators only take in sequences of integers. You will need to use a label encoder to convert strings to integers.
+# Currently, all the estimators only take in sequences of integers. 
+# You will need to use a label encoder to convert strings to integers.
 from sklearn import preprocessing
 le = preprocessing.LabelEncoder()
-my_string = ['two', 'roads', 'diverged', ... 'in', 'the', 'undergrowth'] # first paragraph of Robert Frost's The Road Not Taken
+my_string = ['two', 'roads', 'diverged'... 'in', 'the', 'undergrowth'] # first paragraph of Frost's The Road Not Taken
 sequence = le.fit_transform(my_string)
 print(sequence)
 >>> [24 17  7 11  0 28 27  1 18 10  6 15 22  5  1  3 16 23 13 10 19  1 14  8
  16  2  9  2 10  6 21 26 12  4 11 20 25]
 smoothed_jackknife_estimator(sequence)
->>> 74.99998801158523    #ground truth : 95 unique words in the poem
+>>> 74.99998801158523    # ground truth : 95 unique words in the poem
 ```
 
 ## Estimators available (Haas et al, 1995) : 
