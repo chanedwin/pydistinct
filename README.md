@@ -115,4 +115,4 @@ Smith, E. P., & van Belle, G. (1984). Nonparametric estimation of species richne
 
 ## Special Thanks
 
-Ng Keng Hwee (
+[Keng Hwee](https://github.com/kenghweeng)
