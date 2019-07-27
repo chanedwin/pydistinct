@@ -1,4 +1,4 @@
-# Pydistinct
+# Pydistinct - Population Distinct Value Estimators
 
  This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample sequence of n values with only d distinct values, predict the total number of distinct values D that exists in the population N.  
 
