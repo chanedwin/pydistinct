@@ -7,6 +7,7 @@ Sample use cases :
 * estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a few sample rows
 
+Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
 
 ## Installation
 
