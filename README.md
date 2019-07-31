@@ -6,7 +6,7 @@ Sample use cases :
 * estimating the number of unique elements in a stream 
   *  If you have an stream that draws from an unknown distribution with D distinct variables, and you sample 100 elements in the stream - use this sequence to estimate D 
 * estimating the number of unique insects in a population from a field sample
- * In a field, you want to estimate how many unique types of insects there are - you then sample 10% of the area, obtain d distinct insects. Use this to predict the population distinct D
+  *  In a field, you want to estimate how many unique types of insects there are - you then sample 10% of the area, obtain d distinct insects. Use this to predict the population distinct D
 * estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a few sample rows
 
