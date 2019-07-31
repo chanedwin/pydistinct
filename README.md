@@ -3,9 +3,15 @@
  This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample sequence of n values with only d distinct values, predict the total number of distinct values D that exists in the population N.  
 
 Sample use cases :
+* estimating the number of unique elements in a stream 
+ * If you have an stream that draws from an unknown distribution with D distinct variables, and you sample 100 elements in the stream but only 10 distinct values come out, or if you see all 100 values are distinct. 
 * estimating the number of unique insects in a population from a field sample
+ * In a field, you want to estimate how many unique types of insects there are - you then sample 10% of the area, obtain d distinct insects. Use this to predict the population distinct D
 * estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a few sample rows
+
+Knowledge of population size (N) :
+In most real world problems, the population size N will not be known - all that is available is the sample sequence. Most of estimators would be improved if the population size N is given to it, but if it isn't the estimators would just assume a very large N and attempt to estimate D anyway. However, in cases where the population size is known, the estimators that rely on population size will take a value (n_pop = N) or a function (pop_estimator that takes in a function of sample size and returns population size i.e lambda x : x * 10) and use that at prediction time.
 
 Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
 
