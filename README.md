@@ -1,27 +1,15 @@
 # Pydistinct - Population Distinct Value Estimators
 
- This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence - given a sample sequence of n values with only d distinct values, predict the total number of distinct values D that exists in the population N.  
+ This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence. 
+ 
+ Specifically, given a sample sequence of n values with only d distinct values, predict the total number of distinct values D that exists in the population N (even if the size of N can be unknown).  
 
 Sample use cases :
 * estimating the number of unique elements in a stream 
   *  If you have an stream that draws from an unknown distribution with D distinct variables, and you sample 100 elements in the stream - use this sequence to estimate D 
 * estimating the number of unique insects in a population from a field sample
-  *  In a field, you want to estimate how many unique types of insects there are - you then sample 10% of the area, obtain d distinct insects. Use this to predict the population distinct D
 * estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a few sample rows
-
-Complexity : knowledge of population size (N) 
-In most real world problems, the population size N will not be known - all that is available is the sample sequence. Most of estimators would be improved if the population size N is given to it, but if it isn't the estimators would just assume a very large N and attempt to estimate D anyway. However, in cases where the population size is known, the estimators that rely on population size will take a value (n_pop = N) or a function (pop_estimator that takes in a function of sample size and returns population size i.e lambda x : x * 10) and use that at prediction time.
-
-Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
-
-## Installation
-
-pip install pydistinct
-
-### Requirements
-
-numpy, statsmodels, scipy, xgboost (Experimental)
 
 ## Usage
 
@@ -59,6 +47,14 @@ smoothed_jackknife_estimator(sequence)
 >>> 74.99998801158523    # ground truth : 95 unique words in the poem
 ```
 
+## Installation
+
+pip install pydistinct
+
+### Requirements
+
+numpy, statsmodels, scipy, xgboost (Experimental)
+
 ## Estimators available (Haas et al, 1995) : 
 
 This package is based on work from Haas et al, 1995.
@@ -83,8 +79,12 @@ Swensson, and Wretman 1992; Haas et al, 1995)
 ### All values are unique
 Where all values seen are unique (d unique values in sequence of length d), no statistical method works and the methods fall back to a special case of [birthday problem](https://en.wikipedia.org/wiki/Birthday_problem) with no collisions. In this problem, we try different values of the distinct values in the population (D), and estimate the probability that we draw d unique values from it with no collision. Intuitively, if our sample contains 10 unique values, then D is more likely to be 100 than 10. If we set a posterior probability (default 0.1), we can then compute the smallest value for D where the probability is greater than 0.1. You can tweak the probability of the birthday solution to get the lower bound (around 0.1) or an upper bound estimate (something like 0.9) of D.
 
-### Knowledge of population size (N)
-In most real world problems, the population size N will not be known - all that is available is the sample sequence. Most of estimators would be improved if the population size N is given to it, but if it isn't the estimators would just assume a very large N and attempt to estimate D anyway.
+### Knowledge of population size (N) 
+
+In most real world problems, the population size N will not be known - all that is available is the sample sequence. Most of estimators would be improved if the population size N is given to it, but if it isn't the estimators would just assume a very large N and attempt to estimate D anyway. However, in cases where the population size is known, the estimators that rely on population size will take a value (n_pop = N) or a function (pop_estimator that takes in a function of sample size and returns population size i.e lambda x : x * 10) and use that at prediction time.
+
+#### Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
+
 
 ## Additional planned work
 
