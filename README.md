@@ -1,8 +1,10 @@
 # Pydistinct - Population Distinct Value Estimators
 
- This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence. 
+ This package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence. 
  
  Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
+ 
+Comparison of these estimators with [hyperloglog](https://pypi.org/project/hyperloglog/) - if you have the entire dataset and you want to compute its cardinality, use hyperloglog. If you only have a sample of the dataset but want to estimate the entire dataset's cardinality, these estimators would be more appropriate.
 
 Sample use cases :
 * estimating the number of unique elements in an infinite stream 
@@ -10,6 +12,7 @@ Sample use cases :
 * estimating the number of unique insects in a population from a field sample
 * estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a few sample rows
+
 
 ## Usage
 
