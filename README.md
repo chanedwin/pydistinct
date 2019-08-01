@@ -33,6 +33,18 @@ horvitz_thompson_estimator(uniform["sample"])
 smoothed_jackknife_estimator(uniform["sample"])
 >>> 1057.1495560288624
 
+# if you know the population size or the ratio of population size to sample size 
+from pydistinct.sampling import sample_gaussian
+gaussian = sample_gaussian(population_size=1000,sample_size=500) # gaussian distribution centered at 0
+
+# if you know the population size or the ratio of population size to sample size 
+smoothed_jackknife_estimator(uniform["sample"]) # provide population size  
+>>> 766.6902930100636 #algorithm overpredicts
+
+smoothed_jackknife_estimator(uniform["sample"],pop_estimator = lambda x : x * 2) # provide ratio of sample size to population 
+>>>505.1381557576779
+smoothed_jackknife_estimator(uniform["sample"],n_pop= 1000) # provide actual population size
+>>> 505.1381557576779
 
 # Currently, all the estimators only take in sequences of integers. 
 # You will need to use a label encoder to convert strings to integers.
@@ -45,6 +57,11 @@ print(sequence)
  16  2  9  2 10  6 21 26 12  4 11 20 25]
 smoothed_jackknife_estimator(sequence)
 >>> 74.99998801158523    # ground truth : 95 unique words in the poem
+
+
+# if you know the population size or the ratio of population size to sample size 
+
+
 ```
 
 ## Installation
