@@ -2,10 +2,10 @@
 
  This package provides statistical estimators to predict a population's total number of distinct values from a sample sequence. 
  
- Specifically, given a sample sequence of n values with only d distinct values, predict the total number of distinct values D that exists in the population N (even if the size of N can be unknown).  
+ Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
 
 Sample use cases :
-* estimating the number of unique elements in a stream 
+* estimating the number of unique elements in an infinite stream 
   *  If you have an stream that draws from an unknown distribution with D distinct variables, and you sample 100 elements in the stream - use this sequence to estimate D 
 * estimating the number of unique insects in a population from a field sample
 * estimating the number of unique words in a document given a sentence or a paragraph
