@@ -11,6 +11,7 @@ from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _
 
 def goodmans_estimator(sequence):
     """
+
     Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to
     numerical complexity
 
@@ -18,6 +19,7 @@ def goodmans_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -63,6 +65,7 @@ def chao_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -81,6 +84,7 @@ def chao_estimator(sequence):
 
 def jackknife_estimator(sequence):
     """
+
     Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
     good at regimes where sample size is close to actual number of points
 
@@ -90,6 +94,7 @@ def jackknife_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -117,6 +122,7 @@ def jackknife_estimator(sequence):
 
 def chao_lee_estimator(sequence):
     """
+
     Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage
 
     gamma hat is an estimator for the squared coefficient of variation of the frequencies
@@ -125,6 +131,7 @@ def chao_lee_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -151,6 +158,7 @@ def chao_lee_estimator(sequence):
 
 def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None):
     """
+
     Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
 
     Note : Hard to determine q (probability of being included)
@@ -164,6 +172,7 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None):
     :type n_pop: int
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -196,6 +205,7 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None):
 
 def sichel_estimator(sequence):
     """
+
     Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992)
     which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
 
@@ -205,6 +215,7 @@ def sichel_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -246,6 +257,7 @@ def sichel_estimator(sequence):
 
 def method_of_moments_estimator(sequence):
     """
+
     Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
     can be optimised (training rate, stopping value)
 
@@ -257,6 +269,7 @@ def method_of_moments_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -290,6 +303,7 @@ def method_of_moments_estimator(sequence):
 
 def bootstrap_estimator(sequence):
     """
+
     Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
 
     DBoot = d + sigma (1-nj/n)^n
@@ -298,6 +312,7 @@ def bootstrap_estimator(sequence):
     :type sequence: array of ints
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -319,6 +334,7 @@ def bootstrap_estimator(sequence):
 
 def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+
     Implementation of the Horvitz-Thompson Estimator to estimate D
     (Sarndal, Swensson, and Wretman 1992; Haas et al, 1995)
 
@@ -333,6 +349,7 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
     :type n_pop: int
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -359,6 +376,7 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
 
 def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000, n_pop=None):
     """
+
     Method-of-Moments Estimator with equal frequency assumption while still sampling
      from a finite relation (Haas et al, 1995)
 
@@ -449,6 +467,7 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
 
 def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+
     Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
@@ -460,6 +479,7 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
     :type n_pop: int
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -504,6 +524,7 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
 
 def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+
     Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
@@ -515,6 +536,7 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
     :type n_pop: int
     :return: estimated distinct count
     :rtype: int
+
     """
     _check_iterable(sequence)
 
@@ -549,6 +571,7 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
 
 def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
+
     hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife
     estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
 
@@ -561,6 +584,7 @@ def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None)
     :type n_pop: int
     :return: estimated distinct count
     :rtype: int
+    
     """
     _check_iterable(sequence)
 
