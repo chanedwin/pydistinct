@@ -1,13 +1,20 @@
-Documentation for the Code
+.. _code:
+
+pydistinct APIs
 **************************
 
-.. automodule:: pydistinct
+Usage
+========
 
+::
 
-useful #1 -- auto members
-=========================
+    # import all the estimators first
+    from pydistinct.stats_estimators import *
+    bootstrap_estimator([1,2,3,3])
+    >>> 3.9923...
 
-This is something I want to say that is not in the docstring. 
+APIs
+========
 
 .. automodule:: pydistinct.stats_estimators
    :members: 

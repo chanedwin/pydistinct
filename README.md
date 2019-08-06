@@ -1,8 +1,8 @@
 # Pydistinct - Population Distinct Value Estimators
 
- This package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. 
+This package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. 
  
- Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
+Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
  
 Comparison of these estimators with [hyperloglog](https://pypi.org/project/hyperloglog/) - if you have the entire dataset and you want to compute its cardinality, use hyperloglog. If you only have a sample of the dataset but want to estimate the entire dataset's cardinality, these estimators would be more appropriate.
 
@@ -13,6 +13,7 @@ Sample use cases :
 * estimating the number of unique words in a document given a sentence or a paragraph
 * estimating the number of unique items in a database from a few sample rows
 
+Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
 
 ## Usage
 
@@ -103,7 +104,6 @@ Where all values seen are unique (d unique values in sequence of length d), no s
 
 In most real world problems, the population size N will not be known - all that is available is the sample sequence. Most of estimators would be improved if the population size N is given to it, but if it isn't the estimators would just assume a very large N and attempt to estimate D anyway. However, in cases where the population size is known, the estimators that rely on population size will take a value (n_pop = N) or a function (pop_estimator that takes in a function of sample size and returns population size i.e lambda x : x * 10) and use that at prediction time.
 
-#### Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
 
 
 ## Additional planned work
