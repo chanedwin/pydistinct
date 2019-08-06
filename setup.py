@@ -25,7 +25,8 @@ setuptools.setup(
         'scipy',
         'statsmodels',
         'xgboost',
-        'numpy'
+        'numpy',
+        'm2r'
     ],
 
     packages=setuptools.find_packages(),
