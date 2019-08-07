@@ -111,6 +111,8 @@ In most real world problems, the population size N will not be known - all that 
 ## Additional planned work
 
 * Include ensemble learning to improve on estimator predictions
+* Include newer work on streaming algorithms
+
 
 ## References
 
