@@ -70,8 +70,6 @@ smoothed_jackknife_estimator(sequence)
 >>> 74.99998801158523    # ground truth : 95 unique words in the poem
 
 
-# if you know the population size or the ratio of population size to sample size 
-
 
 ```
 
@@ -121,7 +119,7 @@ In most real world problems, the population size N will not be known - all that 
 
 ## References
 
-Haas, P. J., Naughton, J. F., Seshadri, S., & Stokes, L. (1995, September). Sampling-based estimation of the number of distinct values of an attribute. In VLDB (Vol. 95, pp. 311-322).
+Haas, P. J., Naughton, J. F., Seshadri, S., & Stokes, L. (1995, September). Sampling based estimation of the number of distinct values of an attribute. In VLDB (Vol. 95, pp. 311-322).
 
 Bunge, J., & Fitzpatrick, M. (1993). Estimating the number of species: a review. Journal of the American Statistical Association, 88(421), 364-373.
 
