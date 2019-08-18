@@ -2,7 +2,7 @@ https://pydistinct.readthedocs.io/en/latest/
 
 # Pydistinct - Population Distinct Value Estimators
 
-This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. It contains tools to estimate a population's cardinality from sample sequence or a stream of data.
+This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. It contains tools to estimate a population's cardinality from sample sequence or a stream of data following Peter Haas's paper on sampling based estimation of the number of distinct values of an attribute.
  
 Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
  
