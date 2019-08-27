@@ -19,7 +19,7 @@ setuptools.setup(
     """,
     long_description_content_type="text/markdown",
     url="https://github.com/chanedwin/pydistinct/",
-    download_url='https://github.com/chanedwin/pydistinct/archive/v0.3.tar.gz',
+    download_url='https://github.com/chanedwin/pydistinct/archive/0.5.tar.gz',
     keywords=['distinct', 'value', 'estimators', 'sample', 'sequences'],
     install_requires=[
         'scipy',
