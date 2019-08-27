@@ -2,18 +2,16 @@ https://pydistinct.readthedocs.io/en/latest/
 
 # Pydistinct - Population Distinct Value Estimators
 
-This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. It contains tools to estimate a population's cardinality from sample sequence or a stream of data following Peter Haas's paper on sampling based estimation of the number of distinct values of an attribute.
- 
+This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. It is useful if you want to quickly estimate the population cardinality when you only have a sample sequence or a stream of data. For example, if you want to quickly estimate the unique elements in a database or the number of twitter users tweeting about a topic, but you can only access a small sample of the entire dataset at a time.
+
 Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
- 
-Comparison of these estimators with [hyperloglog](https://pypi.org/project/hyperloglog/) - if you have the entire dataset and you want to compute its cardinality, use hyperloglog. If you only have a sample of the dataset but want to estimate the entire dataset's cardinality, these estimators would be more appropriate.
 
 Sample use cases :
-* estimating the number of unique elements in an infinite stream 
-  *  If you have an stream that draws from an unknown distribution with D distinct variables, and you sample 100 elements in the stream - use this sequence to estimate D 
-* estimating the number of unique insects in a population from a field sample
-* estimating the number of unique words in a document given a sentence or a paragraph
-* estimating the number of unique items in a database from a few sample rows
+estimating the number of 
+   * unique elements in an infinite stream 
+   * unique insects in a population from a field sample
+   * unique words in a document given a sentence or a paragraph
+   * estimating the number of unique items in a database from a few sample rows
 
 Suggested Estimators (See Usage) :
 * bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
@@ -109,7 +107,9 @@ Where all values seen are unique (d unique values in sequence of length d), no s
 
 In most real world problems, the population size N will not be known - all that is available is the sample sequence. Most of estimators would be improved if the population size N is given to it, but if it isn't the estimators would just assume a very large N and attempt to estimate D anyway. However, in cases where the population size is known, the estimators that rely on population size will take a value (n_pop = N) or a function (pop_estimator that takes in a function of sample size and returns population size i.e lambda x : x * 10) and use that at prediction time.
 
+### Comparison with hyperloglog
 
+Comparison of these estimators with [hyperloglog](https://pypi.org/project/hyperloglog/) - if you have the entire dataset and you want to compute its cardinality, use hyperloglog. If you only have a sample of the dataset but want to estimate the entire dataset's cardinality, these estimators would be more appropriate.
 
 ## Additional planned work
 
