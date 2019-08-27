@@ -4,12 +4,16 @@ https://pydistinct.readthedocs.io/en/latest/
 
 This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population, like estimating the unique elements in a database with only a few rows or the number of unique twitter users tweeting about a topic with only the latest thousand tweets.
 
-Suggested Estimators (See Usage) :
-* bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
-* smoothed_jackknife_estimator : More aggressive technique, could also be useful as a upper bound, Useful if you want to avoid underpredicting
-* horvitz_thompson_estimator : tends to predict somewhat in the middle of bootstrap and smoothed jackknife
 
 Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
+
+## Installation
+
+pip install pydistinct
+
+### Requirements
+
+numpy, statsmodels, scipy
 
 ## Usage
 
@@ -62,15 +66,12 @@ smoothed_jackknife_estimator(sequence)
 
 ```
 
-## Installation
-
-pip install pydistinct
-
-### Requirements
-
-numpy, statsmodels, scipy, xgboost (Experimental)
-
 ## Estimators available : 
+
+Suggested Estimators (See Usage) :
+* bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
+* smoothed_jackknife_estimator : More aggressive technique, could also be useful as a upper bound, Useful if you want to avoid underpredicting
+* horvitz_thompson_estimator : tends to predict somewhat in the middle of bootstrap and smoothed jackknife
 
 This package is based on work from [Haas et al, 1995](https://pdfs.semanticscholar.org/d26b/70479bc818ef7079732ba014e82368dbf66f.pdf) with estimators from Goodman (1949), Chao (1984), Chao and Lee (1992), Shlosser (1981), Sichel (1986a, 1986b and 1992), Smith and Van Bell (1984), Sarndal,
 Swensson, and Wretman (1992),
