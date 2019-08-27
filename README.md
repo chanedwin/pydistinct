@@ -2,7 +2,7 @@ https://pydistinct.readthedocs.io/en/latest/
 
 # Pydistinct - Population Distinct Value Estimators
 
-This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population, like estimating the unique elements in a database or the number of twitter users tweeting about a topic.
+This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population, like estimating the unique elements in a database with only a few rows or the number of unique twitter users tweeting about a topic with only the latest thousand tweets.
 
 Suggested Estimators (See Usage) :
 * bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
