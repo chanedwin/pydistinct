@@ -1,4 +1,4 @@
-https://pydistinct.readthedocs.io/en/latest/ 
+https://pydistinct.readthedocs.io/en/0.5/ 
 
 # Pydistinct - Population Distinct Value Estimators
 
@@ -150,6 +150,6 @@ Smith, E. P., & van Belle, G. (1984). Nonparametric estimation of species richne
 
 [Keng Hwee](https://github.com/kenghweeng)
 
-### See Documentation at https://pydistinct.readthedocs.io/en/latest/ 
+### See Documentation at https://pydistinct.readthedocs.io/en/0.5/ 
 
 Written in python
