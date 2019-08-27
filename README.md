@@ -2,16 +2,7 @@ https://pydistinct.readthedocs.io/en/latest/
 
 # Pydistinct - Population Distinct Value Estimators
 
-This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population. It is useful if you want to quickly estimate the population cardinality when you only have a sample sequence or a stream of data. For example, if you want to quickly estimate the unique elements in a database or the number of twitter users tweeting about a topic, but you can only access a small sample of the entire dataset at a time.
-
-Specifically, given a sample sequence of _n_ values with only _d_ distinct values, predict the total number of distinct values _D_ that exists in the population _N_ (even if _N_ is unknown).  
-
-Sample use cases :
-estimating the number of 
-   * unique elements in an infinite stream 
-   * unique insects in a population from a field sample
-   * unique words in a document given a sentence or a paragraph
-   * estimating the number of unique items in a database from a few sample rows
+This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population, like estimating the unique elements in a database or the number of twitter users tweeting about a topic.
 
 Suggested Estimators (See Usage) :
 * bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
@@ -97,6 +88,15 @@ Swensson, and Wretman (1992),
 * **method_of_moments_v3_estimator** : Method-of-Moments Estimator without equal frequency assumption 
 * **smoothed_jackknife_estimator** : Jackknife scheme for estimating D that accounts for true bias structures 
 * **hybrid_estimator** : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
+
+## Sample Use Cases
+
+estimating the number of 
+   * unique elements in an infinite stream 
+   * unique insects in a population from a field sample
+   * unique words in a document given a sentence or a paragraph
+   * estimating the number of unique items in a database from a few sample rows
+   
 
 
 ## Complexities
