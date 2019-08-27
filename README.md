@@ -19,6 +19,7 @@ numpy, statsmodels, scipy
 
 ```python
 from pydistinct.stats_estimators import *
+from pydistinct.ensemble_estimators import median_estimator
 sequence = [1,2,2,3]
 horvitz_thompson_estimator(sequence)
 >>> 3.9923808687325613
@@ -30,6 +31,9 @@ print(uniform)
  'sample': array([ 50, 883, 190,... 797, 453, 867]), # 500 sampled values 
  'sample_distinct': 396} # only 396 distinct values in sample
  
+ 
+median_estimator(uniform["sample"]) # best estimator
+>>> 993.547157796407 
 bootstrap_estimator(uniform["sample"])
 >>> 520.6409023638918 
 horvitz_thompson_estimator(uniform["sample"])
@@ -69,6 +73,7 @@ smoothed_jackknife_estimator(sequence)
 ## Estimators available 
 
 Suggested Estimators (See Usage)
+* median_estimator : Takes the median estimate of all the different estimators
 * bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
 * smoothed_jackknife_estimator : More aggressive technique, could also be useful as a upper bound, Useful if you want to avoid underpredicting
 * horvitz_thompson_estimator : tends to predict somewhat in the middle of bootstrap and smoothed jackknife
