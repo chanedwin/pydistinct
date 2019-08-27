@@ -11,7 +11,7 @@ Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest
 
 pip install pydistinct
 
-### Requirements
+## Requirements
 
 numpy, statsmodels, scipy
 
@@ -66,9 +66,9 @@ smoothed_jackknife_estimator(sequence)
 
 ```
 
-## Estimators available : 
+## Estimators available 
 
-Suggested Estimators (See Usage) :
+Suggested Estimators (See Usage)
 * bootstrap_estimator : More conservative technique, could also be useful as a lower bound. Useful if you want to avoid overpredicting
 * smoothed_jackknife_estimator : More aggressive technique, could also be useful as a upper bound, Useful if you want to avoid underpredicting
 * horvitz_thompson_estimator : tends to predict somewhat in the middle of bootstrap and smoothed jackknife
@@ -98,8 +98,6 @@ estimating the number of
    * unique words in a document given a sentence or a paragraph
    * estimating the number of unique items in a database from a few sample rows
    
-
-
 ## Complexities
 ### All values are unique
 Where all values seen are unique (d unique values in sequence of length d), no statistical method works and the methods fall back to a special case of [birthday problem](https://en.wikipedia.org/wiki/Birthday_problem) with no collisions. In this problem, we try different values of the distinct values in the population (D), and estimate the probability that we draw d unique values from it with no collision. Intuitively, if our sample contains 10 unique values, then D is more likely to be 100 than 10. If we set a posterior probability (default 0.1), we can then compute the smallest value for D where the probability is greater than 0.1. You can tweak the probability of the birthday solution to get the lower bound (around 0.1) or an upper bound estimate (something like 0.9) of D.
