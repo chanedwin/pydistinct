@@ -24,7 +24,7 @@ horvitz_thompson_estimator(sequence)
 >>> 3.9923808687325613
 
 from pydistinct.sampling import sample_uniform
-uniform = sample_uniform(n_distinct_integers=1000, sample_size=500) # sample 500 values from a distribution of 1000 integers with uniform probability
+uniform = sample_uniform() # sample 500 values from a distribution of 1000 integers with uniform probability
 print(uniform)
 >>> {'ground_truth': 1000, # population distinct values
  'sample': array([ 50, 883, 190,... 797, 453, 867]), # 500 sampled values 
