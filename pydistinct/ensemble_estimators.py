@@ -1,7 +1,3 @@
-"""
-This is a module to be used as a reference for building other modules
-"""
-
 from pydistinct.stats_estimators import *
 
 
