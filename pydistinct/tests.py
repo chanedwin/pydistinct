@@ -1,6 +1,6 @@
 import unittest
 
-from pydistinct.ml_estimator import *
+from pydistinct.ensemble_estimators import *
 from pydistinct.sampling import *
 
 

@@ -1,4 +1,5 @@
 import math
+
 import numpy as np
 
 
@@ -65,8 +66,6 @@ def _compute_birthday_problem_probability(sequence: np.ndarray, lower_bound_prob
     :return: estimated lower bound for distinct number of integers
     :rtype: int
     """
-    print(
-        "Using collision probability to compute lower bound of distinct count ie min(n) for which P(n) > 0.01")
     d = len(set(sequence))
     i = d
     while True:  # try different lower bounds
