@@ -16,6 +16,17 @@ Usage
 APIs
 ========
 
+
+Ensemble Estimator
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: pydistinct.ensemble_estimators
+   :members:
+
+
+Statistical Estimators
+~~~~~~~~~~~~~~~~~~~~~~
+
 .. automodule:: pydistinct.stats_estimators
    :members: 
 
