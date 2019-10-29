@@ -2,7 +2,7 @@ https://pydistinct.readthedocs.io/
 
 # Pydistinct - Population Distinct Value Estimators
 
-The most useful and well-known algorithm for computing the cardinality of a population is hyperloglog. It is fast, efficient and also allows you to specify the error bound you are comfortable with. However hyperloglog requires that you have the entire population at hand. Sometimes you only have a sample, and collecting/sampling from the population is costly. 
+The most useful and well-known algorithm for computing the cardinality of a population is hyperloglog. It is fast, efficient and also allows you to specify the error bound you are comfortable with. However hyperloglog requires that you have the entire population at hand. Sometimes you only have a sample of that population, and collecting more samples from the population is costly or time consuming (field work, streaming data etc). 
 
 Pydistinct is a library that allows you to compute the cardinality of a population from a small sample. It implements 15 statistical estimators from [Peter Haas et al. (1996)](https://pdfs.semanticscholar.org/d26b/70479bc818ef7079732ba014e82368dbf66f.pdf) in python that allows you to estimate, from just a small sample, the cardinality of the population.
 
