@@ -2,7 +2,9 @@ https://pydistinct.readthedocs.io/
 
 # Pydistinct - Population Distinct Value Estimators
 
-This python package provides statistical estimators to predict a population's cardinality (number of distinct values) from a sample sequence of that population, like estimating the unique elements in a database with only a few rows or the number of unique twitter users tweeting about a topic with only the latest thousand tweets.
+The most useful and well-known algorithm for computing the cardinality of a population is hyperloglog. It is fast, efficient and also allows you to specify the error bound you are comfortable with. However hyperloglog requires that you have the entire population at hand. Sometimes you only have a sample, and collecting/sampling from the population is costly. 
+
+Pydistinct is a library that allows you to compute the cardinality of a population from a small sample. It implements 15 statistical estimators from [Peter Haas et al. (1996)](https://pdfs.semanticscholar.org/d26b/70479bc818ef7079732ba014e82368dbf66f.pdf) in python that allows you to estimate, from just a small sample, the cardinality of the population.
 
 
 Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
@@ -114,6 +116,11 @@ In most real world problems, the population size N will not be known - all that 
 ### Comparison with hyperloglog
 
 Comparison of these estimators with [hyperloglog](https://pypi.org/project/hyperloglog/) - if you have the entire dataset and you want to compute its cardinality, use hyperloglog. If you only have a sample of the dataset but want to estimate the entire dataset's cardinality, these estimators would be more appropriate.
+
+### Research Error Bounds
+
+Research error bounds are provided in Peter Haas et al. (1996) paper : [Sampling-Based Estimation of
+the Number of Distinct Values of an Attribute](https://pdfs.semanticscholar.org/d26b/70479bc818ef7079732ba014e82368dbf66f.pdf)
 
 ## Additional planned work
 
