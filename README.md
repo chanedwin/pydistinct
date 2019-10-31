@@ -164,4 +164,4 @@ Smith, E. P., & van Belle, G. (1984). Nonparametric estimation of species richne
 
 ### See Documentation at https://pydistinct.readthedocs.io/
 
-Written in python
+Written in python, known in literature as distinct value estimation.
