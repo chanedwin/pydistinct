@@ -6,6 +6,6 @@ install:
   - pip install pytest-cov
   - pip install coveralls
 script:
-  - pytest --cov=pydistinct/
+  - pytest --cov=pydistinct/test.py
 after_success:
   - coveralls
