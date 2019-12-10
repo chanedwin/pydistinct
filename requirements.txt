@@ -1,0 +1,4 @@
+scipy
+statsmodels
+numpy
+m2r
