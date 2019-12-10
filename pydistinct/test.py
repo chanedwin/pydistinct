@@ -104,6 +104,20 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(hybrid_estimator(self.gaussian_sequence), 729.7448646736057)
         self.assertEqual(hybrid_estimator(self.zipf_sequence), 373662173.68805337)
 
+    def test_hybrid(self):
+        self.assertEqual(hybrid_estimator(self.unique_sequence), 8)
+        self.assertEqual(hybrid_estimator(self.test_sequence), 6.142856986848082)
+        self.assertEqual(hybrid_estimator(self.uniform_sequence), 804.0302095880729)
+        self.assertEqual(hybrid_estimator(self.gaussian_sequence), 729.7448646736057)
+        self.assertEqual(hybrid_estimator(self.zipf_sequence), 373662173.68805337)
 
-if __name__ == '__main__': 
+    def test_median(self):
+        self.assertEqual(hybrid_estimator(self.unique_sequence), 8)
+        self.assertEqual(hybrid_estimator(self.test_sequence), 6.342753842225977)
+        self.assertEqual(hybrid_estimator(self.uniform_sequence), 718.3014582205042)
+        self.assertEqual(hybrid_estimator(self.gaussian_sequence), 722.3317617423154)
+        self.assertEqual(hybrid_estimator(self.zipf_sequence), 205.6930010544074)
+
+
+if __name__ == '__main__':
     unittest.main()
