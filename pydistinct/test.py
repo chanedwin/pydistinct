@@ -105,5 +105,5 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(hybrid_estimator(self.zipf_sequence), 373662173.68805337)
 
 
-if __name__ == '__main__':gi
-    unittest.main()
+if __name__ == '__main__': gi
+unittest.main()
