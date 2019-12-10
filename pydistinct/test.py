@@ -114,7 +114,8 @@ class TestEstimatorMethods(unittest.TestCase):
     def test_median(self):
         self.assertEqual(median_estimator(self.unique_sequence), 8)
         self.assertEqual(median_estimator(self.test_sequence), 6.342753842225977)
-        self.assertEqual(median_estimator(self.uniform_sequence), 718.3014582205042)
+        self.assertGreaterEqual(median_estimator(self.uniform_sequence), 718.301458220504)  # last dp is diff on diff os
+        self.assertLessEqual(median_estimator(self.uniform_sequence), 718.301458220505)
         self.assertEqual(median_estimator(self.gaussian_sequence), 722.3317617423154)
         self.assertEqual(median_estimator(self.zipf_sequence), 205.6930010544074)
 

@@ -1,6 +1,6 @@
-import math
 import warnings
 
+import math
 import numpy as np
 from scipy.optimize import broyden1, broyden2
 from scipy.stats import chi2

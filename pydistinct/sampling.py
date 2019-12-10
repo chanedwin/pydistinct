@@ -49,7 +49,7 @@ def sample_gaussian(cov=200.0, population_size=1000, sample_size=500, seed=None)
 
 def sample_zipf(alpha=1.3, population_size=1000, sample_size=500, seed=None):
     """
-    generate a population of distinct integers from a zipf distribution (ground truth) as characterised by zipf(alpha,n),
+    generate a population of distinct integers from a zipf distribution (ground truth) as characterised by zipf(alpha,n)
     then draw a sample a sequence of integers from the population.
 
     :param alpha: alpha parameter of zipf distribution
@@ -74,7 +74,8 @@ def sample_zipf(alpha=1.3, population_size=1000, sample_size=500, seed=None):
 
 def full_test(func, sequence, ground_truth, verbose=False, n_trials=100, params={}):
     """
-    run estimator with a sequence for n trials and compares results with ground truth. Catches estimator errors if invalid
+    run estimator with a sequence for n trials and compares results with ground truth.
+    Catches estimator errors if invalid
 
     :param func: estimator to be tested
     :type func: estimator function, takes in a sequence, returns a number (estimated distinct count)
