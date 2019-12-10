@@ -1,3 +1,11 @@
 language: python
-
-script: pytest pydistinct/tests.py
+python:
+  - "3.6"
+install:
+  - pip install pytest
+  - pip install pytest-cov
+  - pip install coveralls
+script:
+  - pytest --cov=pydistinct/
+after_success:
+  - coveralls
