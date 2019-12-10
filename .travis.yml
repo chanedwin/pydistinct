@@ -1,4 +1,3 @@
 language: python
 
-script: pytest
-
+script: pytest pydistinct/tests.py
