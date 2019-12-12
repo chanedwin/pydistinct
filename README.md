@@ -47,14 +47,15 @@ horvitz_thompson_estimator(uniform["sample"])
 smoothed_jackknife_estimator(uniform["sample"])
 >>> 1057.1495560288624
 
-# if you know the population size or the ratio of population size to sample size 
 from pydistinct.sampling import sample_gaussian
-gaussian = sample_gaussian(population_size=1000,sample_size=500) # gaussian distribution centered at 0
+gaussian = sample_gaussian(population_size=1000,sample_size=500)
 
-# if you know the population size or the ratio of population size to sample size 
-smoothed_jackknife_estimator(uniform["sample"]) # provide population size  
+print(gaussian["ground_truth"]) 
+>>> 566
+smoothed_jackknife_estimator(uniform["sample"]) # provide nothing, algo overestimates
 >>> 766.6902930100636 #algorithm overpredicts
 
+# if you know the population size or the ratio of population size to sample size 
 smoothed_jackknife_estimator(uniform["sample"],pop_estimator = lambda x : x * 2) # provide ratio of sample size to population 
 >>>505.1381557576779
 smoothed_jackknife_estimator(uniform["sample"],n_pop= 1000) # provide actual population size
