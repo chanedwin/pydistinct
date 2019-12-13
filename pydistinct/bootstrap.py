@@ -300,6 +300,8 @@ def bootstrap(values, stat_func, alpha=0.05,
     Args:
         values: numpy array of values to bootstrap
         stat_func: statistic to bootstrap. We provide several default functions:
+            median_estimator
+            method_of_moments_v3_estimator
         alpha: alpha value representing the confidence interval.
             Defaults to 0.05, i.e., 95th-CI.
         num_iterations: number of bootstrap iterations to run. The higher this
