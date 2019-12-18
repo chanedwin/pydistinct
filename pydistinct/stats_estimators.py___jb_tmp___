@@ -1,12 +1,13 @@
-import math
 import warnings
 
+import math
 import numpy as np
+from scipy.optimize import broyden1, broyden2
+from scipy.stats import chi2
+
 from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, \
     h_x, \
     memoized_h_x, _check_iterable
-from scipy.optimize import broyden1, broyden2
-from scipy.stats import chi2
 
 
 def goodmans_estimator(sequence, cache=None):

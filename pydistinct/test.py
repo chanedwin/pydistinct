@@ -125,11 +125,12 @@ class TestEstimatorMethods(unittest.TestCase):
 
     def test_median(self):
         self.assertEqual(median_estimator(self.unique_sequence), 8)
-        self.assertEqual(median_estimator(self.test_sequence), 6.366099596631006)
-        self.assertGreaterEqual(median_estimator(self.uniform_sequence), 796.140916441000)  # last dp is diff on diff os
-        self.assertLessEqual(median_estimator(self.uniform_sequence), 796.140916441010)
-        self.assertEqual(median_estimator(self.gaussian_sequence), 722.3281454754505)
-        self.assertEqual(median_estimator(self.zipf_sequence), 205.66159907264472)
+        self.assertEqual(median_estimator(self.test_sequence), 6.318820732877672)
+        self.assertGreaterEqual(median_estimator(self.uniform_sequence),
+                                798.2153746544501)  # last dp is diff on diff os
+        self.assertLessEqual(median_estimator(self.uniform_sequence), 798.2153746544701)
+        self.assertEqual(median_estimator(self.gaussian_sequence), 721.1991016009922)
+        self.assertEqual(median_estimator(self.zipf_sequence), 214.46501159599572)
 
     def test_cached_funcion(self):  # critical to test cache function on all functions
 
@@ -156,14 +157,26 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(hybrid_estimator(self.test_sequence, cache=cached_data), 6.142856986848082)
 
     def test_bootstrap(self):
-        self.assertEqual(bootstrap(self.unique_sequence, stat_func=median_estimator),
-                         BootstrapResults(3.1999999999999993, 8, 12.6))
-        self.assertEqual(bootstrap(self.test_sequence, stat_func=median_estimator),
-                         BootstrapResults(3.237425335862243, 6.366099596631006 , 8.374788818911835))
-        self.assertEqual(bootstrap(self.gaussian_sequence, stat_func=median_estimator),
-                         BootstrapResults(668.1224408865861, 722.3281454754505 , 784.4087329433855))
-        self.assertEqual(bootstrap(self.zipf_sequence, stat_func=median_estimator),
-                         BootstrapResults(183.34641124915314, 205.66159907264472 , 225.47196616261735))
+        unique_seq_bootstrap = bootstrap(self.unique_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound, 3.1951544453993007)
+        self.assertAlmostEqual(unique_seq_bootstrap.value, 8)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound, 12.7987886114498)
+
+        unique_seq_bootstrap = bootstrap(self.uniform_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 738.060609510319 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 866.5716408688647 / 1000, places=1)
+
+        unique_seq_bootstrap = bootstrap(self.gaussian_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 665.2778560102962 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 721.1991017009922 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 781.138083765126 / 1000, places=1)
+
+        unique_seq_bootstrap = bootstrap(self.zipf_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 191.58692163070448 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 214.46501159699572 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 235.2604950597016 / 1000, places=1)
+
 
 if __name__ == '__main__':
     unittest.main()

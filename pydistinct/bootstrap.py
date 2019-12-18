@@ -109,7 +109,7 @@ def _get_confidence_interval(bootstrap_dist, stat_val, alpha, is_pivotal):
         low = _np.percentile(bootstrap_dist, 100 * ((alpha / 2)))
         val = _np.percentile(bootstrap_dist, 50)
         high = _np.percentile(bootstrap_dist, 100 * (1 - (alpha / 2)))
-    return BootstrapResults(low, stat_val, high)
+    return BootstrapResults(low, val, high)
 
 
 def _needs_sparse_unification(values_lists):

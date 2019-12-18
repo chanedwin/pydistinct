@@ -26,37 +26,56 @@ sequence = [1,2,2,3]
 horvitz_thompson_estimator(sequence)
 >>> 3.9923808687325613
 
-from pydistinct.sampling import sample_uniform
-uniform = sample_uniform() # sample 500 values from a distribution of 1000 integers with uniform probability
+from pydistinct.sampling import sample_uniform, sample_gaussian, sample_zipf
+uniform = sample_uniform(seed=1337) # sample 500 values from a distribution of 1000 integers with uniform probability
 print(uniform)
 >>> {'ground_truth': 1000, # population distinct values
- 'sample': array([ 50, 883, 190,... 797, 453, 867]), # 500 sampled values 
- 'sample_distinct': 396} # only 396 distinct values in sample
+ 'sample': array([152, 190, 861,... 69, 164, 252]), # 500 sampled values
+ 'sample_distinct': 395} # only 396 distinct values in sample
  
  
-median_estimator(uniform["sample"]) # best estimator
->>> 993.547157796407 
+median_estimator(uniform["sample"]) # generally the best estimator
+>>> 1013.1954292072004 # close to ground truth of 1000
 bootstrap_estimator(uniform["sample"])
->>> 520.6409023638918 
+>>> 518.4906064599444 # underprediction
 horvitz_thompson_estimator(uniform["sample"])
->>> 588.8990980951648
+>>> 585.7879884021419
 smoothed_jackknife_estimator(uniform["sample"])
->>> 1057.1495560288624
+>>> 1027.0415022416053
 
-# if you know the population size or the ratio of population size to sample size 
-from pydistinct.sampling import sample_gaussian
-gaussian = sample_gaussian(population_size=1000,sample_size=500) # gaussian distribution centered at 0
 
-# if you know the population size or the ratio of population size to sample size 
-smoothed_jackknife_estimator(uniform["sample"]) # provide population size  
->>> 766.6902930100636 #algorithm overpredicts
+# Using bootstrap module to generate CIs
 
-smoothed_jackknife_estimator(uniform["sample"],pop_estimator = lambda x : x * 2) # provide ratio of sample size to population 
->>>505.1381557576779
+from pydistinct.bootstrap import bootstrap
+bootstrap(uniform["sample"],num_iterations=1000,iteration_batch_size=10,stat_func=median_estimator,alpha=0.05,is_pivotal=False)
+>>> 1013.1954292072005    (934.8627672053022, 1104.5740587473167)
+bootstrap(uniform["sample"],num_iterations=1000,iteration_batch_size=10,stat_func=smoothed_jackknife_estimator,alpha=0.05,is_pivotal=False)
+>>> 1027.041502241605    (933.3868405058629, 1122.4277049112984)
+
+# bootstrap is less precise with skewed distributions
+zipf = sample_zipf(seed=42) # sample from a zipf function (power law distribution)
+print(zipf)
+>>> {'ground_truth': 271, # 271 unique values in population
+ 'sample': array([80, 1, 1, 1,... 7, 1, 2]), # 500 sampled values, a lot of repeats due to zipf law
+ 'sample_distinct': 157} # 157 distinct values in sample
+
+bootstrap(zipf["sample"],num_iterations=1000,stat_func=median_estimator,alpha=0.01)
+>>> 214.4650115959957   (186.9877092688388, 241.31585930549633) # 271 is ground truth
+bootstrap(zipf["sample"],num_iterations=1000,stat_func=smoothed_jackknife_estimator,alpha=0.01)
+>>> 205.7244030361701    (180.46764319902013, 233.56608765181718) # 271 is ground truth
+
+# including estimate of population size helps some estimators
+gaussian = sample_gaussian(population_size=1000,sample_size=500,seed=42) # gaussian distribution centered at 0
+print(gaussian["ground_truth"]
+>>> 555   # 555 unique values in population
+smoothed_jackknife_estimator(gaussian["sample"])
+>>> 722.3427899336142 # algorithm over-predicts
+smoothed_jackknife_estimator(uniform["sample"],pop_estimator = lambda x : x * 2) # provide ratio of sample size to population
+>>> 477.5927262252345 # prediction improves
 smoothed_jackknife_estimator(uniform["sample"],n_pop= 1000) # provide actual population size
->>> 505.1381557576779
+>>> 477.5927262252345 # prediction improves
 
-# Currently, all the estimators only take in sequences of integers. 
+# Currently, all the estimators only take in sequences of integers.
 # You will need to use a label encoder to convert strings to integers.
 from sklearn import preprocessing
 le = preprocessing.LabelEncoder()
@@ -67,6 +86,7 @@ print(sequence)
  16  2  9  2 10  6 21 26 12  4 11 20 25]
 smoothed_jackknife_estimator(sequence)
 >>> 74.99998801158523    # ground truth : 95 unique words in the poem
+
 
 
 
@@ -96,6 +116,8 @@ Swensson, and Wretman (1992),
 * **method_of_moments_v3_estimator** : Method-of-Moments Estimator without equal frequency assumption 
 * **smoothed_jackknife_estimator** : Jackknife scheme for estimating D that accounts for true bias structures 
 * **hybrid_estimator** : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
+* **median_estimator** : takes median of 7 faster and generally more reliable estimators
+* **full_median_estimator** : takes median of all estimators, 10x slower than median_estimator
 
 ## Sample Use Cases
 
