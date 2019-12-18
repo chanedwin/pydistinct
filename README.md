@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/chanedwin/pydistinct.svg?branch=master)](https://travis-ci.org/chanedwin/pydistinct)
+[![Coverage Status](https://coveralls.io/repos/github/chanedwin/pydistinct/badge.svg?branch=master)](https://coveralls.io/github/chanedwin/pydistinct?branch=master)
+
+
 https://pydistinct.readthedocs.io/
 
 # Pydistinct - Population Distinct Value Estimators
@@ -58,11 +62,10 @@ print(zipf)
 >>> {'ground_truth': 271, # 271 unique values in population
  'sample': array([80, 1, 1, 1,... 7, 1, 2]), # 500 sampled values, a lot of repeats due to zipf law
  'sample_distinct': 157} # 157 distinct values in sample
-
 bootstrap(zipf["sample"],num_iterations=1000,stat_func=median_estimator,alpha=0.01)
 >>> 214.4650115959957   (186.9877092688388, 241.31585930549633) # 271 is ground truth
 bootstrap(zipf["sample"],num_iterations=1000,stat_func=smoothed_jackknife_estimator,alpha=0.01)
->>> 205.7244030361701    (180.46764319902013, 233.56608765181718) # 271 is ground truth
+>>> 205.7244030361701    (180.46764319902013, 233.56608765181718) 
 
 # including estimate of population size helps some estimators
 gaussian = sample_gaussian(population_size=1000,sample_size=500,seed=42) # gaussian distribution centered at 0
@@ -72,8 +75,8 @@ smoothed_jackknife_estimator(gaussian["sample"])
 >>> 722.3427899336142 # algorithm over-predicts
 smoothed_jackknife_estimator(uniform["sample"],pop_estimator = lambda x : x * 2) # provide ratio of sample size to population
 >>> 477.5927262252345 # prediction improves
-smoothed_jackknife_estimator(uniform["sample"],n_pop= 1000) # provide actual population size
->>> 477.5927262252345 # prediction improves
+
+
 
 # Currently, all the estimators only take in sequences of integers.
 # You will need to use a label encoder to convert strings to integers.
