@@ -1,40 +1,30 @@
 import math
-import warnings
-
 import numpy as np
-from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, \
-    h_x, \
-    memoized_h_x, _check_iterable
 from scipy.optimize import broyden1, broyden2
 from scipy.stats import chi2
 
+from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, h_x, \
+    memoized_h_x, _check_iterable
 
-def goodmans_estimator(sequence, cache=None):
+
+def goodmans_estimator(sequence):
     """
-
-    Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to
-    numerical complexity
+    Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to numerical complexity
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
-
+    n = len(sequence)
+    d = len(set(sequence))
     N = n * 2
+    frequency_dictionary = _get_frequency_dictionary(sequence)
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     memo_fact_dict = {}
@@ -55,40 +45,28 @@ def goodmans_estimator(sequence, cache=None):
     return d_goodman
 
 
-def chao_estimator(sequence, cache=None):
+def chao_estimator(sequence):
     """
 
     Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
 
     d_chao = d + (f_1)^2/(2*(f_2))
-    returns birthday problem solution if there are no sequences observed of frequency 2
-    (ie each distinct value observed is never seen again)
+    returns birthday problem solution if there are no sequences observed of frequency 2 (ie each distinct value observed is never seen again)
 
     also makes insane bets (10x) when every point observed is almost unique. could be good or bad
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
-
-    if 1 not in frequency_dictionary:
-        return len(set(sequence))  # d_chao will return d + 0 anyway
-
+    frequency_dictionary = _get_frequency_dictionary(sequence)
     f1 = frequency_dictionary[1]
 
     if 2 not in frequency_dictionary:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     f2 = frequency_dictionary[2]
@@ -97,32 +75,26 @@ def chao_estimator(sequence, cache=None):
     return d_chao
 
 
-def jackknife_estimator(sequence, cache=None):
+def jackknife_estimator(sequence):
     """
-
-    Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
-    good at regimes where sample size is close to actual number of points
-
     D^hat_c_j = d_n - (n - l)(d_(n-1)- d_n).
+    need to double check
+
+    #good at regimes where sample size is close to actual number of points
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+    n = len(sequence)
+    d = len(set(sequence))
+    attribute_counts = _get_attribute_counts(sequence)
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     sum_d_n_minus_1 = 0
@@ -139,42 +111,32 @@ def jackknife_estimator(sequence, cache=None):
     return d_jackknife
 
 
-def chao_lee_estimator(sequence, cache=None):
+def chao_lee_estimator(sequence):
     """
-
-    Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage
-
     gamma hat is an estimator for the squared coefficient of variation of the frequencies
+
+    #check the gamma estimator
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-        frequency_dictionary = cache["freq"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
-        frequency_dictionary = _get_frequency_dictionary(sequence)
-
-    if 1 not in frequency_dictionary:
-        return _compute_birthday_problem_probability(sequence)
-
+    n = len(sequence)
+    d = len(set(sequence))
+    frequency_dictionary = _get_frequency_dictionary(sequence)
     f1 = frequency_dictionary[1]
+    attribute_counts = _get_attribute_counts(sequence)
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     c_hat = 1 - f1 / n  # throws an error if f1 = n (all values observed are unique.)
     if c_hat == 0:
+        print("all values observed are unique, using birthday problem approach")
         return _compute_birthday_problem_probability(sequence)
     gamma_hat_squared = (1 / d) * np.var(list(attribute_counts.values())) / ((n / d) ** 2)
 
@@ -183,12 +145,12 @@ def chao_lee_estimator(sequence, cache=None):
     return d_cl
 
 
-def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cache=None):
+def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None):
     """
 
-    Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
+    Hard to determine q (probability of being included)
 
-    Note : Hard to determine q (probability of being included)
+    @KengHwee
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -198,23 +160,18 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cac
     :param n_pop: estimate of population size if available, will be used over pop_estimator function
     :type n_pop: int
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+    n = len(sequence)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
+    frequency_dictionary = _get_frequency_dictionary(sequence)
     if not n_pop:
         n_pop = pop_estimator(n)
 
@@ -234,33 +191,28 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cac
     return d_shlosser
 
 
-def sichel_estimator(sequence, cache=None):
+def sichel_estimator(sequence):
     """
+    could change solution finding method, currently using newton raphson method
+    can be optimised (training rate, stopping value)
 
-    Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992)
-    which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
-
-    implementation uses broyden 2 to solve and search linear space for good solution
+    use broyden 1 to solve, search linear space for good solution
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+    n = len(sequence)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
+
+    frequency_dictionary = _get_frequency_dictionary(sequence)
 
     f1 = frequency_dictionary[1]
     a = ((2 * n) / d) - np.log(n / f1)  # does not depend on g
@@ -271,7 +223,6 @@ def sichel_estimator(sequence, cache=None):
         return result
 
     d_sichel_set = set()
-    warnings.filterwarnings('ignore')
 
     for value in np.linspace((f1 / n) + 0.00001, 0.999999, 20):
         try:
@@ -283,7 +234,6 @@ def sichel_estimator(sequence, cache=None):
                 d_sichel_set.add(d_sichel)
         except Exception as e:
             continue
-    warnings.resetwarnings()
 
     if not d_sichel_set:
         return d
@@ -291,38 +241,37 @@ def sichel_estimator(sequence, cache=None):
         return min(d_sichel_set)
 
 
-def method_of_moments_estimator(sequence, cache=None):
+def method_of_moments_estimator(sequence):
     """
-
-    Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
     can be optimised (training rate, stopping value)
 
     d = d_moments(l -  e^(-n))/d_moments)
 
     solve for d_moments in d = d_moments(l -  e^(-n))/d_moments)
 
+        d/d_moments = 1 -e^(-n))/d_moments
+        d(d)/d(d_moments) = 1*(-e^(-n/d_moments)) + d_moments((1/d_moments^2)*e(-n/d_moments))
+        f(g) = (1+g)ln(g) - Ag + B
+        guess g as  g = (f1/n + 1) / 2
+        next_g = g - f(g)/f'(g)
+
+
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
+    n = len(sequence)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     def diff_eqn(D):
         return D * (1 - np.exp((-n / D))) - d
-
-    warnings.filterwarnings('ignore')
 
     try:
         d_moments_1 = float(broyden1(diff_eqn, d))
@@ -334,7 +283,7 @@ def method_of_moments_estimator(sequence, cache=None):
         d_moments_2 = float(broyden2(diff_eqn, d))
     except:
         d_moments_2 = 1000000000000000000000000
-    warnings.resetwarnings()
+
     result = min(d_moments_1, d_moments_2)
     if result == 1000000000000000000000000:
         return d
@@ -342,33 +291,25 @@ def method_of_moments_estimator(sequence, cache=None):
         return result
 
 
-def bootstrap_estimator(sequence, cache=None):
+def bootstrap_estimator(sequence):
     """
-
-    Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
-
-    DBoot = d + sigma (1-nj/n)^n
+        DBoot = d + sigma (1-nj/n)^n
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+    n = len(sequence)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
+    attribute_counts = _get_attribute_counts(sequence)
     bootstrap_sum = 0
     for j, n_j in attribute_counts.items():
         final_val = (1 - n_j / n) ** n
@@ -377,12 +318,9 @@ def bootstrap_estimator(sequence, cache=None):
     return d_bootstrap
 
 
-def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
-
-    Implementation of the Horvitz-Thompson Estimator to estimate D
-    (Sarndal, Swensson, and Wretman 1992; Haas et al, 1995)
-
+    n = length of sequence
     n_j = attribute count of value j
 
     :param sequence: sample sequence of integers
@@ -393,25 +331,20 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
     :param n_pop: estimate of population size if available, will be used over pop_estimator function
     :type n_pop: int
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+    n = len(sequence)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     if not n_pop:
         n_pop = pop_estimator(n)
+    attribute_counts = _get_attribute_counts(sequence)
 
     d_horvitz_thompson = 0
     memo_dict_instance = {}
@@ -423,11 +356,8 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
     return d_horvitz_thompson
 
 
-def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000, n_pop=None, cache=None):
+def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000, n_pop=None):
     """
-
-    Method-of-Moments Estimator with equal frequency assumption while still sampling
-     from a finite relation (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -437,21 +367,17 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
     :param n_pop: estimate of population size if available, will be used over pop_estimator function
     :type n_pop: int
     :return: estimated distinct count
-    :rtype: float
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-
+    n = len(sequence)
     if not n_pop:
         n_pop = pop_estimator(n)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     # need to implement gamma memoized function and h_x again here to enable use of global variables in broydens
@@ -500,19 +426,16 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
     def diff_eqn(D):
         return D * (1 - h_x((n_pop / D), n, n_pop)) - d
 
-    warnings.filterwarnings('ignore')
-
     try:
         d_moments_1 = float(broyden1(diff_eqn, d))
     except Exception as e:
+        print(e)
         d_moments_1 = 1000000000000000000000000
 
     try:
         d_moments_2 = float(broyden2(diff_eqn, d))
     except:
         d_moments_2 = 1000000000000000000000000
-
-    warnings.resetwarnings()
 
     result = min(d_moments_1, d_moments_2)
     if result == 1000000000000000000000000:
@@ -521,10 +444,8 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
         return result
 
 
-def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
-
-    Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -534,25 +455,20 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
     :param n_pop: estimate of population size if available, will be used over pop_estimator function
     :type n_pop: int
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
-
+    n = len(sequence)
     if not n_pop:
         n_pop = pop_estimator(n)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
+
+    attribute_counts = _get_attribute_counts(sequence)
 
     gamma_hat_squared = (1 / d) * np.var(list(attribute_counts.values())) / ((n_pop / d) ** 2)
 
@@ -582,10 +498,8 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
     return d_moments_v3
 
 
-def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
-
-    Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -595,27 +509,20 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
     :param n_pop: estimate of population size if available, will be used over pop_estimator function
     :type n_pop: int
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-        frequency_dictionary = cache["freq"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
-        frequency_dictionary = _get_frequency_dictionary(sequence)
-
+    n = len(sequence)
     if not n_pop:
         n_pop = pop_estimator(n)
+    d = len(set(sequence))
 
-    if d == n:
+    if d == len(sequence):
+        print("all values seen were unique, reverting to inverse birthday problem solution")
         return _compute_birthday_problem_probability(sequence)
+    frequency_dictionary = _get_frequency_dictionary(sequence)
+    attribute_counts = _get_attribute_counts(sequence)
 
     gamma_hat_squared = (1 / d) * np.var(list(attribute_counts.values())) / ((n_pop / d) ** 2)
 
@@ -635,11 +542,8 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
     return d_sjk
 
 
-def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None):
     """
-
-    hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife
-    estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
@@ -649,27 +553,21 @@ def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None,
     :param n_pop: estimate of population size if available, will be used over pop_estimator function
     :type n_pop: int
     :return: estimated distinct count
-    :rtype: float
-
+    :rtype: int
     """
     _check_iterable(sequence)
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-    else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
-
+    n = len(sequence)
     if not n_pop:
         n_pop = pop_estimator(n)
+    d = len(set(sequence))
 
     if d == n:
+        print("f2 frequency is 0, Chao estimator returns infinite results")
         return _compute_birthday_problem_probability(sequence)
 
     n_bar = n / d
+    attribute_counts = _get_attribute_counts(sequence)
     mu = sum((((i - n_bar) ** 2) / n_bar) for i in attribute_counts.values())
     chi_critical = chi2.isf(0.975, n - 1, loc=n_bar, scale=n_bar)  # set alpha is 0.975
     if mu <= chi_critical:

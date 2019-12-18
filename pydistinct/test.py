@@ -1,7 +1,11 @@
 import unittest
 
+import numpy as np
+
+from pydistinct.bootstrap import bootstrap, BootstrapResults
 from pydistinct.ensemble_estimators import *
 from pydistinct.sampling import *
+from pydistinct.utils import _compute_birthday_problem_probability, _get_attribute_counts, _get_frequency_dictionary
 
 
 class TestEstimatorMethods(unittest.TestCase):
@@ -12,6 +16,21 @@ class TestEstimatorMethods(unittest.TestCase):
         self.uniform_sequence = sample_uniform(seed=42)["sample"]
         self.gaussian_sequence = sample_gaussian(seed=42)["sample"]
         self.zipf_sequence = sample_zipf(seed=42)["sample"]
+        self.small_zipf_sequence = sample_zipf(seed=42, sample_size=20)["sample"]
+
+    def test_birthday_probability(self):
+        self.assertEqual(_compute_birthday_problem_probability(self.unique_sequence), 8)
+
+    def test_attr_count(self):
+        self.assertEqual(_get_attribute_counts(self.test_sequence), {1: 1, 2: 1, 3: 2, 4: 2, 5: 3})
+        self.assertEqual(_get_attribute_counts(self.small_zipf_sequence),
+                         {1: 7, 2: 2, 3: 4, 6: 1, 19: 1, 22: 1, 23: 1, 46: 1, 80: 1, 385: 1}
+                         )
+
+    def test_freq_count(self):
+        self.assertEqual(_get_frequency_dictionary(self.test_sequence), {1: 2, 2: 2, 3: 1})
+        self.assertEqual(_get_frequency_dictionary(self.small_zipf_sequence), {1: 7, 2: 1, 4: 1, 7: 1}
+                         )
 
     def test_goodmans(self):
         self.assertEqual(goodmans_estimator(self.unique_sequence), 8)
@@ -104,20 +123,59 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(hybrid_estimator(self.gaussian_sequence), 729.7448646736057)
         self.assertEqual(hybrid_estimator(self.zipf_sequence), 373662173.68805337)
 
-    def test_hybrid(self):
-        self.assertEqual(hybrid_estimator(self.unique_sequence), 8)
-        self.assertEqual(hybrid_estimator(self.test_sequence), 6.142856986848082)
-        self.assertEqual(hybrid_estimator(self.uniform_sequence), 804.0302095880729)
-        self.assertEqual(hybrid_estimator(self.gaussian_sequence), 729.7448646736057)
-        self.assertEqual(hybrid_estimator(self.zipf_sequence), 373662173.68805337)
-
     def test_median(self):
         self.assertEqual(median_estimator(self.unique_sequence), 8)
-        self.assertEqual(median_estimator(self.test_sequence), 6.342753842225977)
-        self.assertGreaterEqual(median_estimator(self.uniform_sequence), 718.301458220504)  # last dp is diff on diff os
-        self.assertLessEqual(median_estimator(self.uniform_sequence), 718.301458220505)
-        self.assertEqual(median_estimator(self.gaussian_sequence), 722.3317617423154)
-        self.assertEqual(median_estimator(self.zipf_sequence), 205.6930010544074)
+        self.assertEqual(median_estimator(self.test_sequence), 6.318820732877672)
+        self.assertGreaterEqual(median_estimator(self.uniform_sequence),
+                                798.2153746544501)  # last dp is diff on diff os
+        self.assertLessEqual(median_estimator(self.uniform_sequence), 798.2153746544701)
+        self.assertEqual(median_estimator(self.gaussian_sequence), 721.1991016009922)
+        self.assertEqual(median_estimator(self.zipf_sequence), 214.46501159599572)
+
+    def test_cached_funcion(self):  # critical to test cache function on all functions
+
+        # build cache
+        n = len(self.test_sequence)
+        d = len(set(self.test_sequence))
+        attribute_counts = _get_attribute_counts(self.test_sequence)
+        frequency_dictionary = _get_frequency_dictionary(self.test_sequence)
+        cached_data = {"n": n, "d": d, "attr": attribute_counts, "freq": frequency_dictionary}
+
+        # test cache
+        self.assertEqual(goodmans_estimator(self.test_sequence, cache=cached_data), 6.464285714285714)
+        self.assertEqual(chao_estimator(self.test_sequence, cache=cached_data), 6.0)
+        self.assertEqual(jackknife_estimator(self.test_sequence, cache=cached_data), 6.777777777777779)
+        self.assertEqual(chao_lee_estimator(self.test_sequence, cache=cached_data), 6.517460317460317)
+        self.assertEqual(shlossers_estimator(self.test_sequence, cache=cached_data), 6.368421052631579)
+        self.assertEqual(sichel_estimator(self.test_sequence, cache=cached_data), 5)
+        self.assertEqual(bootstrap_estimator(self.test_sequence, cache=cached_data), 5.927210553389188)
+        self.assertEqual(horvitz_thompson_estimator(self.test_sequence, cache=cached_data), 6.319408087820948)
+        self.assertEqual(method_of_moments_estimator(self.test_sequence, cache=cached_data), 6.8265909343805165)
+        self.assertEqual(method_of_moments_v2_estimator(self.test_sequence, cache=cached_data), 6.3694941686386155)
+        self.assertEqual(method_of_moments_v3_estimator(self.test_sequence, cache=cached_data), 6.369496180824973)
+        self.assertEqual(smoothed_jackknife_estimator(self.test_sequence, cache=cached_data), 6.142856986848082)
+        self.assertEqual(hybrid_estimator(self.test_sequence, cache=cached_data), 6.142856986848082)
+
+    def test_bootstrap(self):
+        unique_seq_bootstrap = bootstrap(self.unique_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound, 3.1951544453993007)
+        self.assertAlmostEqual(unique_seq_bootstrap.value, 8)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound, 12.7987886114498)
+
+        unique_seq_bootstrap = bootstrap(self.uniform_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 738.060609510319 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 866.5716408688647 / 1000, places=1)
+
+        unique_seq_bootstrap = bootstrap(self.gaussian_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 665.2778560102962 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 721.1991017009922 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 781.138083765126 / 1000, places=1)
+
+        unique_seq_bootstrap = bootstrap(self.zipf_sequence, stat_func=median_estimator)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 191.58692163070448 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 214.46501159699572 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 235.2604950597016 / 1000, places=1)
 
 
 if __name__ == '__main__':
