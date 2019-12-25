@@ -10,7 +10,13 @@ def _check_iterable(sequence):
         raise Exception("Object returned is not iterable")
 
 
-def _get_attribute_counts(sequence: np.ndarray):
+def _check_dict(attribute_count):
+    if type(attribute_count) != dict:
+        raise Exception("""Attribute count should be of type dictionary, with keys representing elements\
+                and values representing counts """)
+
+
+def _get_attribute_counts(sequence):
     """
     counts each unique attribute in a sequence
 
@@ -28,7 +34,7 @@ def _get_attribute_counts(sequence: np.ndarray):
     return attribute_counts
 
 
-def _get_frequency_dictionary(sequence: np.ndarray):
+def _get_frequency_dictionary(sequence=None, attribute_counts=None):
     """
     counts the frequency of attributes (group by count)
 
@@ -38,8 +44,11 @@ def _get_frequency_dictionary(sequence: np.ndarray):
     :rtype: dict
     """
     from itertools import groupby
+    if not (sequence or attribute_counts):
+        raise Exception("Must provide sequence or attribute counts")
 
-    attribute_counts = _get_attribute_counts(sequence)
+    if sequence:
+        attribute_counts = _get_attribute_counts(sequence)
 
     frequency_dictionary = {}
     for key, group in groupby(sorted(attribute_counts.items(), key=lambda x: x[1]), key=lambda x: x[1]):
@@ -48,7 +57,7 @@ def _get_frequency_dictionary(sequence: np.ndarray):
     return frequency_dictionary
 
 
-def _compute_birthday_problem_probability(sequence: np.ndarray, lower_bound_probability=0.1):
+def _compute_birthday_problem_probability(d, lower_bound_probability=0.1):
     """
 
     Suppose we draw N samples and all are distinct values. We can compute the probability of this event happening
@@ -66,7 +75,6 @@ def _compute_birthday_problem_probability(sequence: np.ndarray, lower_bound_prob
     :return: estimated lower bound for distinct number of integers
     :rtype: int
     """
-    d = len(set(sequence))
     i = d
     while True:  # try different lower bounds
         lower_bound = d + i
@@ -147,3 +155,20 @@ def h_x(x, n, n_pop):
 
     result = np.exp(gamma_num_1 + gamma_num_2 - gamma_denom_1 - gamma_denom_2)
     return result
+
+
+def precompute_from_seq(sequence):
+    _check_iterable(sequence)
+    n = len(sequence)
+    d = len(set(sequence))
+    attribute_count = _get_attribute_counts(sequence)
+    frequency_dictionary = _get_frequency_dictionary(attribute_count=attribute_count)
+    return n, d, attribute_count, frequency_dictionary
+
+
+def precompute_from_attr(attribute_count):
+    _check_dict(attribute_count)
+    n = sum(attribute_count.values())
+    d = len(attribute_count.keys())
+    frequency_dictionary = _get_frequency_dictionary(attribute_count=attribute_count)
+    return n, d, attribute_count, frequency_dictionary

@@ -19,7 +19,7 @@ class TestEstimatorMethods(unittest.TestCase):
         self.small_zipf_sequence = sample_zipf(seed=42, sample_size=20)["sample"]
 
     def test_birthday_probability(self):
-        self.assertEqual(_compute_birthday_problem_probability(self.unique_sequence), 8)
+        self.assertEqual(_compute_birthday_problem_probability(4), 8)
 
     def test_attr_count(self):
         self.assertEqual(_get_attribute_counts(self.test_sequence), {1: 1, 2: 1, 3: 2, 4: 2, 5: 3})
@@ -28,7 +28,7 @@ class TestEstimatorMethods(unittest.TestCase):
                          )
 
     def test_freq_count(self):
-        self.assertEqual(_get_frequency_dictionary(self.test_sequence), {1: 2, 2: 2, 3: 1})
+        self.assertEqual(_get_frequency_dictionary(sequence=self.test_sequence), {1: 2, 2: 2, 3: 1})
         self.assertEqual(_get_frequency_dictionary(self.small_zipf_sequence), {1: 7, 2: 1, 4: 1, 7: 1}
                          )
 

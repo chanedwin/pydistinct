@@ -3,13 +3,12 @@ import warnings
 
 import numpy as np
 from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, \
-    h_x, \
-    memoized_h_x, _check_iterable
+    h_x, _check_dict, memoized_h_x, _check_iterable, precompute_from_attr, precompute_from_seq
 from scipy.optimize import broyden1, broyden2
 from scipy.stats import chi2
 
 
-def goodmans_estimator(sequence, cache=None):
+def goodmans_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to
@@ -21,30 +20,28 @@ def goodmans_estimator(sequence, cache=None):
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if not (sequence or attributes or cache):
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
+    if cache:
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    N = n * 2
-
-    if d == n:
+    if n == d:  # all values are distinct
         return _compute_birthday_problem_probability(sequence)
 
     memo_fact_dict = {}
 
-    def memo_fact(x, memo_dict):
+    def memo_fact(x, memo_dict):  # memoize factorial function to make it faster
         if x not in memo_dict:
             memo_dict[x] = np.math.factorial(x)
         return memo_dict[x], memo_dict
 
     sum_goodman = 0
+    N = n * 2
     for i in frequency_dictionary.keys():
         num_1, memo_fact_dict = memo_fact(N - n + i - 1, memo_fact_dict)
         num_2, memo_fact_dict = memo_fact(n - i, memo_fact_dict)
@@ -55,7 +52,7 @@ def goodmans_estimator(sequence, cache=None):
     return d_goodman
 
 
-def chao_estimator(sequence, cache=None):
+def chao_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
@@ -72,32 +69,34 @@ def chao_estimator(sequence, cache=None):
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if not (sequence or attributes or cache):
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
+    if cache:
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if 1 not in frequency_dictionary:
-        return len(set(sequence))  # d_chao will return d + 0 anyway
+        return d  # d_chao will return d + 0 anyway
 
     f1 = frequency_dictionary[1]
 
     if 2 not in frequency_dictionary:
-        return _compute_birthday_problem_probability(sequence)
+        return _compute_birthday_problem_probability(d)
 
     f2 = frequency_dictionary[2]
-    d_chao = len(set(sequence)) + np.square(f1) / (2 * f2)
+    d_chao = d + np.square(f1) / (2 * f2)
 
     return d_chao
 
 
-def jackknife_estimator(sequence, cache=None):
+def jackknife_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
@@ -111,27 +110,20 @@ def jackknife_estimator(sequence, cache=None):
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if not (sequence or attributes or cache):
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
-    if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
+    if cache:
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
-    sum_d_n_minus_1 = 0
-    for i in range(n):
-        tuple_k = sequence[i]
-        if attribute_counts[tuple_k] == 1:
-            sum_d_n_minus_1 += d - 1
-        else:
-            sum_d_n_minus_1 += d
+    sum_d_n_minus_1 = d * n - frequency_dictionary[1]
     d_n_minus_1 = sum_d_n_minus_1 / n
 
     d_jackknife = d - (n - 1) * (d_n_minus_1 - d)
