@@ -102,7 +102,6 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(method_of_moments_estimator(self.unique_sequence), 8)
         self.assertEqual(method_of_moments_estimator(self.test_sequence), 6.8265909343805165)
         self.assertEqual(method_of_moments_estimator(self.uniform_sequence), 801.6089111589724)
-        print(self.uniform_sequence_attr)
         self.assertEqual(method_of_moments_estimator(attributes=self.uniform_sequence_attr), 801.6089111589724)
         self.assertEqual(method_of_moments_estimator(self.gaussian_sequence), 723.4787989985088)
         self.assertEqual(method_of_moments_estimator(self.zipf_sequence), 164.96233450766724)
@@ -151,6 +150,18 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(median_estimator(self.gaussian_sequence), 721.1991016009922)
         self.assertEqual(median_estimator(self.zipf_sequence), 214.46501159599572)
 
+    def test_full_median(self):
+        self.assertEqual(full_median_estimator(self.unique_sequence), 8)
+        self.assertEqual(full_median_estimator(self.test_sequence), 6.34274793057924)
+        self.assertGreaterEqual(full_median_estimator(self.uniform_sequence),
+                                798.2153746544401)  # last dp is diff on diff os
+        self.assertLessEqual(full_median_estimator(self.uniform_sequence), 798.2153746544701)
+        self.assertGreaterEqual(full_median_estimator(attributes=self.uniform_sequence_attr),
+                                798.2153746544401)  # last dp is diff on diff os
+        self.assertLessEqual(full_median_estimator(attributes=self.uniform_sequence_attr), 798.2153746544701)
+        self.assertEqual(full_median_estimator(self.gaussian_sequence), 722.3313807805691)
+        self.assertEqual(full_median_estimator(self.zipf_sequence), 214.46501159599572)
+
     def test_cached_funcion(self):  # critical to test cache function on all functions
 
         # build cache
@@ -161,19 +172,19 @@ class TestEstimatorMethods(unittest.TestCase):
         cached_data = {"n": n, "d": d, "attr": attribute_counts, "freq": frequency_dictionary}
 
         # test cache
-        self.assertEqual(goodmans_estimator(self.test_sequence, cache=cached_data), 6.464285714285714)
-        self.assertEqual(chao_estimator(self.test_sequence, cache=cached_data), 6.0)
-        self.assertEqual(jackknife_estimator(self.test_sequence, cache=cached_data), 6.777777777777779)
-        self.assertEqual(chao_lee_estimator(self.test_sequence, cache=cached_data), 6.517460317460317)
-        self.assertEqual(shlossers_estimator(self.test_sequence, cache=cached_data), 6.368421052631579)
-        self.assertEqual(sichel_estimator(self.test_sequence, cache=cached_data), 5)
-        self.assertEqual(bootstrap_estimator(self.test_sequence, cache=cached_data), 5.927210553389188)
-        self.assertEqual(horvitz_thompson_estimator(self.test_sequence, cache=cached_data), 6.319408087820948)
-        self.assertEqual(method_of_moments_estimator(self.test_sequence, cache=cached_data), 6.8265909343805165)
-        self.assertEqual(method_of_moments_v2_estimator(self.test_sequence, cache=cached_data), 6.3694941686386155)
-        self.assertEqual(method_of_moments_v3_estimator(self.test_sequence, cache=cached_data), 6.369496180824973)
-        self.assertEqual(smoothed_jackknife_estimator(self.test_sequence, cache=cached_data), 6.142856986848082)
-        self.assertEqual(hybrid_estimator(self.test_sequence, cache=cached_data), 6.142856986848082)
+        self.assertEqual(goodmans_estimator(cache=cached_data), 6.464285714285714)
+        self.assertEqual(chao_estimator(cache=cached_data), 6.0)
+        self.assertEqual(jackknife_estimator(cache=cached_data), 6.777777777777779)
+        self.assertEqual(chao_lee_estimator(cache=cached_data), 6.517460317460317)
+        self.assertEqual(shlossers_estimator(cache=cached_data), 6.368421052631579)
+        self.assertEqual(sichel_estimator(cache=cached_data), 5)
+        self.assertEqual(bootstrap_estimator(cache=cached_data), 5.927210553389188)
+        self.assertEqual(horvitz_thompson_estimator(cache=cached_data), 6.319408087820948)
+        self.assertEqual(method_of_moments_estimator(cache=cached_data), 6.8265909343805165)
+        self.assertEqual(method_of_moments_v2_estimator(cache=cached_data), 6.3694941686386155)
+        self.assertEqual(method_of_moments_v3_estimator(cache=cached_data), 6.369496180824973)
+        self.assertEqual(smoothed_jackknife_estimator(cache=cached_data), 6.142856986848082)
+        self.assertEqual(hybrid_estimator(cache=cached_data), 6.142856986848082)
 
     def test_bootstrap(self):
         unique_seq_bootstrap = bootstrap(self.unique_sequence, stat_func=median_estimator)
