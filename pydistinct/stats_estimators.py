@@ -3,13 +3,12 @@ import warnings
 
 import numpy as np
 from pydistinct.utils import _get_attribute_counts, _get_frequency_dictionary, _compute_birthday_problem_probability, \
-    h_x, \
-    memoized_h_x, _check_iterable
+    h_x, _check_dict, memoized_h_x, _check_iterable, precompute_from_attr, precompute_from_seq
 from scipy.optimize import broyden1, broyden2
 from scipy.stats import chi2
 
 
-def goodmans_estimator(sequence, cache=None):
+def goodmans_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of goodmans estimator from Goodman 1949 : throws an error if N is too high due to
@@ -17,34 +16,39 @@ def goodmans_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence is not None:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    N = n * 2
-
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:  # all values are distinct
+        return _compute_birthday_problem_probability(d)
 
     memo_fact_dict = {}
 
-    def memo_fact(x, memo_dict):
+    def memo_fact(x, memo_dict):  # memoize factorial function to make it faster
         if x not in memo_dict:
             memo_dict[x] = np.math.factorial(x)
         return memo_dict[x], memo_dict
 
     sum_goodman = 0
+    N = n * 2
     for i in frequency_dictionary.keys():
         num_1, memo_fact_dict = memo_fact(N - n + i - 1, memo_fact_dict)
         num_2, memo_fact_dict = memo_fact(n - i, memo_fact_dict)
@@ -55,7 +59,7 @@ def goodmans_estimator(sequence, cache=None):
     return d_goodman
 
 
-def chao_estimator(sequence, cache=None):
+def chao_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of Chao's estimator from Chao 1984, using counts of values that appear exactly once and twice
@@ -68,36 +72,45 @@ def chao_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence is not None:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if 1 not in frequency_dictionary:
-        return len(set(sequence))  # d_chao will return d + 0 anyway
+        return d  # d_chao will return d + 0 anyway
 
     f1 = frequency_dictionary[1]
 
     if 2 not in frequency_dictionary:
-        return _compute_birthday_problem_probability(sequence)
+        return _compute_birthday_problem_probability(d)
 
     f2 = frequency_dictionary[2]
-    d_chao = len(set(sequence)) + np.square(f1) / (2 * f2)
+    d_chao = d + np.square(f1) / (2 * f2)
 
     return d_chao
 
 
-def jackknife_estimator(sequence, cache=None):
+def jackknife_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Jackknife scheme for estimating D (Ozsoyoglu et al., 1991)
@@ -107,31 +120,31 @@ def jackknife_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence is not None:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
-    sum_d_n_minus_1 = 0
-    for i in range(n):
-        tuple_k = sequence[i]
-        if attribute_counts[tuple_k] == 1:
-            sum_d_n_minus_1 += d - 1
-        else:
-            sum_d_n_minus_1 += d
+    sum_d_n_minus_1 = d * n - frequency_dictionary[1]
     d_n_minus_1 = sum_d_n_minus_1 / n
 
     d_jackknife = d - (n - 1) * (d_n_minus_1 - d)
@@ -139,7 +152,7 @@ def jackknife_estimator(sequence, cache=None):
     return d_jackknife
 
 
-def chao_lee_estimator(sequence, cache=None):
+def chao_lee_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of Chao and Lee's estimator (Chao and Lee, 1984) using a natural estimator of coverage
@@ -148,34 +161,38 @@ def chao_lee_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-        frequency_dictionary = cache["freq"]
+        n, d, attribute_counts, frequency_dictionary = cache["n"], cache["d"], cache["attr"], cache["freq"]
+    elif sequence is not None:
+        n, d, attribute_counts, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, attribute_counts, frequency_dictionary = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if 1 not in frequency_dictionary:
-        return _compute_birthday_problem_probability(sequence)
+        return _compute_birthday_problem_probability(d)
 
     f1 = frequency_dictionary[1]
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
-
     c_hat = 1 - f1 / n  # throws an error if f1 = n (all values observed are unique.)
     if c_hat == 0:
-        return _compute_birthday_problem_probability(sequence)
+        return _compute_birthday_problem_probability(d)
     gamma_hat_squared = (1 / d) * np.var(list(attribute_counts.values())) / ((n / d) ** 2)
 
     d_cl = (d / c_hat) + ((n * (1 - c_hat) * gamma_hat_squared) / c_hat)
@@ -183,7 +200,7 @@ def chao_lee_estimator(sequence, cache=None):
     return d_cl
 
 
-def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cache=None):
+def shlossers_estimator(sequence=None, attributes=None, pop_estimator=lambda x: x * 2, n_pop=None, cache=None):
     """
 
     Implementation of Shlosser's Estimator (Shlosser 1981) using a Bernoulli Sampling scheme
@@ -192,6 +209,13 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cac
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :param pop_estimator: function to estimate population size if possible
     :type pop_estimator: function that takes in the length of sequence (int) and outputs
                          the estimated population size (int)
@@ -201,19 +225,18 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cac
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence is not None:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if not n_pop:
         n_pop = pop_estimator(n)
@@ -234,7 +257,7 @@ def shlossers_estimator(sequence, pop_estimator=lambda x: x * 2, n_pop=None, cac
     return d_shlosser
 
 
-def sichel_estimator(sequence, cache=None):
+def sichel_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of Sichel’s Parametric Estimator (Sichel 1986a, 1986b and 1992)
@@ -244,23 +267,29 @@ def sichel_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if not (sequence is not None or attributes or cache):
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        frequency_dictionary = cache["freq"]
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence is not None:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     f1 = frequency_dictionary[1]
     a = ((2 * n) / d) - np.log(n / f1)  # does not depend on g
@@ -291,7 +320,7 @@ def sichel_estimator(sequence, cache=None):
         return min(d_sichel_set)
 
 
-def method_of_moments_estimator(sequence, cache=None):
+def method_of_moments_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Simple Method-of-Moments Estimator to estimate D (Haas et al, 1995)
@@ -303,21 +332,29 @@ def method_of_moments_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
+        n, d, frequency_dictionary = cache["n"], cache["d"], cache["freq"]
+    elif sequence is not None:
+        n, d, _, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
+        n, d, _, frequency_dictionary = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     def diff_eqn(D):
         return D * (1 - np.exp((-n / D))) - d
@@ -342,7 +379,7 @@ def method_of_moments_estimator(sequence, cache=None):
         return result
 
 
-def bootstrap_estimator(sequence, cache=None):
+def bootstrap_estimator(sequence=None, attributes=None, cache=None):
     """
 
     Implementation of a bootstrap estimator to estimate D (Smith and Van Bell 1984; Haas et al, 1995)
@@ -351,23 +388,29 @@ def bootstrap_estimator(sequence, cache=None):
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :return: estimated distinct count
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
+        n, d, attribute_counts = cache["n"], cache["d"], cache["attr"]
+    elif sequence is not None:
+        n, d, attribute_counts, _ = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+        n, d, attribute_counts, _ = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     bootstrap_sum = 0
     for j, n_j in attribute_counts.items():
@@ -377,7 +420,8 @@ def bootstrap_estimator(sequence, cache=None):
     return d_bootstrap
 
 
-def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def horvitz_thompson_estimator(sequence=None, attributes=None, pop_estimator=lambda x: x * 10000000, n_pop=None,
+                               cache=None):
     """
 
     Implementation of the Horvitz-Thompson Estimator to estimate D
@@ -387,6 +431,13 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :param pop_estimator: function to estimate population size if possible
     :type pop_estimator: function that takes in the length of sequence (int) and outputs
                          the estimated population size (int)
@@ -396,19 +447,18 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
+        n, d, attribute_counts = cache["n"], cache["d"], cache["attr"]
+    elif sequence is not None:
+        n, d, attribute_counts, _ = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+        n, d, attribute_counts, _ = precompute_from_attr(attributes)
 
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if not n_pop:
         n_pop = pop_estimator(n)
@@ -423,7 +473,8 @@ def horvitz_thompson_estimator(sequence, pop_estimator=lambda x: x * 10000000, n
     return d_horvitz_thompson
 
 
-def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000, n_pop=None, cache=None):
+def method_of_moments_v2_estimator(sequence=None, attributes=None, pop_estimator=lambda x: x * 1000000, n_pop=None,
+                                   cache=None):
     """
 
     Method-of-Moments Estimator with equal frequency assumption while still sampling
@@ -431,6 +482,13 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :param pop_estimator: function to estimate population size if possible
     :type pop_estimator: function that takes in the length of sequence (int) and outputs
                          the estimated population size (int)
@@ -439,20 +497,21 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
     :return: estimated distinct count
     :rtype: float
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
+        n, d, attribute_counts = cache["n"], cache["d"], cache["attr"]
+    elif sequence is not None:
+        n, d, attribute_counts, _ = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
+        n, d, attribute_counts, _ = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if not n_pop:
         n_pop = pop_estimator(n)
-
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
 
     # need to implement gamma memoized function and h_x again here to enable use of global variables in broydens
 
@@ -521,13 +580,21 @@ def method_of_moments_v2_estimator(sequence, pop_estimator=lambda x: x * 1000000
         return result
 
 
-def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def method_of_moments_v3_estimator(sequence=None, attributes=None, pop_estimator=lambda x: x * 10000000, n_pop=None,
+                                   cache=None):
     """
 
     Method-of-Moments Estimator without equal frequency assumption (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :param pop_estimator: function to estimate population size if possible
     :type pop_estimator: function that takes in the length of sequence (int) and outputs
                          the estimated population size (int)
@@ -537,22 +604,21 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
+        n, d, attribute_counts = cache["n"], cache["d"], cache["attr"]
+    elif sequence is not None:
+        n, d, attribute_counts, _ = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+        n, d, attribute_counts, _ = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if not n_pop:
         n_pop = pop_estimator(n)
-
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
 
     gamma_hat_squared = (1 / d) * np.var(list(attribute_counts.values())) / ((n_pop / d) ** 2)
 
@@ -574,7 +640,7 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
             return_sum += 1 / (_n_pop - _x - _n + k)
         return return_sum
 
-    d_mm_1 = method_of_moments_v2_estimator(sequence)
+    d_mm_1 = method_of_moments_v2_estimator(attributes=attribute_counts)
     n_pop_tilda = n_pop / d_mm_1
     d_mm_2_huge_term = 0.5 * (n_pop_tilda ** 2) * gamma_hat_squared * d_mm_1 * h_x(n_pop_tilda, n, n_pop) * (
             compute_g_n(n_pop_tilda, n, n_pop) - compute_g_n(n_pop_tilda, n, n_pop) ** 2)
@@ -582,13 +648,21 @@ def method_of_moments_v3_estimator(sequence, pop_estimator=lambda x: x * 1000000
     return d_moments_v3
 
 
-def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def smoothed_jackknife_estimator(sequence=None, attributes=None, pop_estimator=lambda x: x * 10000000, n_pop=None,
+                                 cache=None):
     """
 
     Jackknife scheme for estimating D that accounts for true bias structures (Haas et al, 1995)
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: attribute count -> dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :param pop_estimator: function to estimate population size if possible
     :type pop_estimator: function that takes in the length of sequence (int) and outputs
                          the estimated population size (int)
@@ -598,24 +672,21 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
-        frequency_dictionary = cache["freq"]
+        n, d, attribute_counts, frequency_dictionary = cache["n"], cache["d"], cache["attr"], cache["freq"]
+    elif sequence is not None:
+        n, d, attribute_counts, frequency_dictionary = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
-        frequency_dictionary = _get_frequency_dictionary(sequence)
+        n, d, attribute_counts, frequency_dictionary = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if not n_pop:
         n_pop = pop_estimator(n)
-
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
 
     gamma_hat_squared = (1 / d) * np.var(list(attribute_counts.values())) / ((n_pop / d) ** 2)
 
@@ -635,7 +706,7 @@ def smoothed_jackknife_estimator(sequence, pop_estimator=lambda x: x * 10000000,
     return d_sjk
 
 
-def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
+def hybrid_estimator(sequence=None, attributes=None, pop_estimator=lambda x: x * 10000000, n_pop=None, cache=None):
     """
 
     hybrid_estimator : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife
@@ -643,6 +714,13 @@ def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None,
 
     :param sequence: sample sequence of integers
     :type sequence: array of ints
+    :param attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
+    :type attributes: dictionary where keys can be any type, values must be integers
+    :param cache: argument used by median methods to avoid recomputation of variables
+    :type cache: dictionary with 4 elements
+                 {"n":no_elements,"d":no_unique_elements,"attr": attribute_counts,
+                 "freq":frequency_dictionary}
     :param pop_estimator: function to estimate population size if possible
     :type pop_estimator: function that takes in the length of sequence (int) and outputs
                          the estimated population size (int)
@@ -652,27 +730,26 @@ def hybrid_estimator(sequence, pop_estimator=lambda x: x * 10000000, n_pop=None,
     :rtype: float
 
     """
-    _check_iterable(sequence)
+    if sequence is None and attributes is None and cache is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
 
     if cache is not None:
-        n = cache["n"]
-        d = cache["d"]
-        attribute_counts = cache["attr"]
+        n, d, attribute_counts = cache["n"], cache["d"], cache["attr"]
+    elif sequence is not None:
+        n, d, attribute_counts, _ = precompute_from_seq(sequence)
     else:
-        n = len(sequence)
-        d = len(set(sequence))
-        attribute_counts = _get_attribute_counts(sequence)
+        n, d, attribute_counts, _ = precompute_from_attr(attributes)
+
+    if n == d:
+        return _compute_birthday_problem_probability(d)
 
     if not n_pop:
         n_pop = pop_estimator(n)
-
-    if d == n:
-        return _compute_birthday_problem_probability(sequence)
 
     n_bar = n / d
     mu = sum((((i - n_bar) ** 2) / n_bar) for i in attribute_counts.values())
     chi_critical = chi2.isf(0.975, n - 1, loc=n_bar, scale=n_bar)  # set alpha is 0.975
     if mu <= chi_critical:
-        return smoothed_jackknife_estimator(sequence, pop_estimator=pop_estimator, n_pop=n_pop)
+        return smoothed_jackknife_estimator(attributes=attribute_counts, pop_estimator=pop_estimator, n_pop=n_pop)
     else:
-        return shlossers_estimator(sequence, n_pop=n_pop)
+        return shlossers_estimator(attributes=attribute_counts, n_pop=n_pop)

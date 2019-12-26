@@ -37,7 +37,7 @@ print(uniform)
  'sample': array([152, 190, 861,... 69, 164, 252]), # 500 sampled values
  'sample_distinct': 395} # only 396 distinct values in sample
  
- 
+# Using the estimators
 median_estimator(uniform["sample"]) # generally the best estimator
 >>> 1013.1954292072004 # close to ground truth of 1000
 bootstrap_estimator(uniform["sample"])
@@ -47,9 +47,18 @@ horvitz_thompson_estimator(uniform["sample"])
 smoothed_jackknife_estimator(uniform["sample"])
 >>> 1027.0415022416053
 
+# Using dictionary of attribute counts to do computation
+attrs = _get_attribute_counts(uniform["sample"])
+print(attrs)
+>>> {1: 1, 2: 1, 5: 1, 6: 2 ...994: 1, 996: 1, 999: 1}
+median_estimator(attributes=attrs)
+>>> 1013.1954292072004
+ecological_sample = {"Carica papaya":1, "Quercus robur":2, "Mangifera indica":1}
+median_estimator(attributes=ecological_sample)
+>>> 4.99810792149732
+
 
 # Using bootstrap module to generate CIs
-
 from pydistinct.bootstrap import bootstrap
 bootstrap(uniform["sample"],num_iterations=1000,iteration_batch_size=10,stat_func=median_estimator,alpha=0.05,is_pivotal=False)
 >>> 1013.1954292072005    (934.8627672053022, 1104.5740587473167)
