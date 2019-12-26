@@ -22,7 +22,7 @@ def _get_attribute_counts(sequence):
 
     :param sequence: observed sequence of integers
     :type sequence: list of int
-    :return: dictionary with keys as attributes and values as counts of these attributes
+    :return: dictionary with keys as attribute counts and values as counts of these attribute_counts
     :rtype: dictionary (str -> int)
     """
     from itertools import groupby
@@ -34,9 +34,9 @@ def _get_attribute_counts(sequence):
     return attribute_counts
 
 
-def _get_frequency_dictionary(sequence=None, attribute_counts=None):
+def _get_frequency_dictionary(sequence=None, attributes=None):
     """
-    counts the frequency of attributes (group by count)
+    counts the frequency of attribute counts (group by count)
 
     :param sequence: observed sequence of integers
     :type sequence: list of int
@@ -44,11 +44,13 @@ def _get_frequency_dictionary(sequence=None, attribute_counts=None):
     :rtype: dict
     """
     from itertools import groupby
-    if not (sequence or attribute_counts):
+    if not (sequence is not None or attributes is not None):
         raise Exception("Must provide sequence or attribute counts")
 
-    if sequence:
+    if sequence is not None:
         attribute_counts = _get_attribute_counts(sequence)
+    else:
+        attribute_counts = attributes
 
     frequency_dictionary = {}
     for key, group in groupby(sorted(attribute_counts.items(), key=lambda x: x[1]), key=lambda x: x[1]):
@@ -161,14 +163,14 @@ def precompute_from_seq(sequence):
     _check_iterable(sequence)
     n = len(sequence)
     d = len(set(sequence))
-    attribute_count = _get_attribute_counts(sequence)
-    frequency_dictionary = _get_frequency_dictionary(attribute_count=attribute_count)
-    return n, d, attribute_count, frequency_dictionary
+    attribute_counts = _get_attribute_counts(sequence)
+    frequency_dictionary = _get_frequency_dictionary(attributes=attribute_counts)
+    return n, d, attribute_counts, frequency_dictionary
 
 
-def precompute_from_attr(attribute_count):
-    _check_dict(attribute_count)
-    n = sum(attribute_count.values())
-    d = len(attribute_count.keys())
-    frequency_dictionary = _get_frequency_dictionary(attribute_count=attribute_count)
-    return n, d, attribute_count, frequency_dictionary
+def precompute_from_attr(attribute_counts):
+    _check_dict(attribute_counts)
+    n = sum(attribute_counts.values())
+    d = len(attribute_counts.keys())
+    frequency_dictionary = _get_frequency_dictionary(attributes=attribute_counts)
+    return n, d, attribute_counts, frequency_dictionary
