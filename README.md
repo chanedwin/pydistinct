@@ -99,7 +99,7 @@ print(sequence)
 smoothed_jackknife_estimator(sequence)
 >>> 74.99998801158523    # ground truth : 95 unique words in the poem
 
-Alternatively, you can also use a value counter to use strings as input :
+# Alternatively, you can also use a value counter to use strings as input :
 from collections import Counter
 z = ['blue', 'red', 'blue', 'yellow', 'blue', 'red']
 attrs = dict(Counter(z))
