@@ -187,22 +187,27 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(hybrid_estimator(cache=cached_data), 6.142856986848082)
 
     def test_bootstrap(self):
-        unique_seq_bootstrap = bootstrap(self.unique_sequence, stat_func=median_estimator)
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.unique_sequence)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound, 3.1951544453993007)
         self.assertAlmostEqual(unique_seq_bootstrap.value, 8)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound, 12.7987886114498)
 
-        unique_seq_bootstrap = bootstrap(self.uniform_sequence, stat_func=median_estimator)
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, attributes=self.uniform_sequence_attr)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 738.060609510319 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 866.5716408688647 / 1000, places=1)
 
-        unique_seq_bootstrap = bootstrap(self.gaussian_sequence, stat_func=median_estimator)
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.uniform_sequence)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 738.060609510319 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 866.5716408688647 / 1000, places=1)
+
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.gaussian_sequence)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 665.2778560102962 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 721.1991017009922 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 781.138083765126 / 1000, places=1)
 
-        unique_seq_bootstrap = bootstrap(self.zipf_sequence, stat_func=median_estimator)
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.zipf_sequence)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 191.58692163070448 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 214.46501159699572 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 235.2604950597016 / 1000, places=1)

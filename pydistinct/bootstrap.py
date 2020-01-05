@@ -112,26 +112,10 @@ def _get_confidence_interval(bootstrap_dist, stat_val, alpha, is_pivotal):
     return BootstrapResults(low, val, high)
 
 
-def _needs_sparse_unification(values_lists):
-    non_zeros = values_lists[0] != 0
-
-    for v in values_lists:
-        v_nz = v != 0
-        non_zeros = (non_zeros + v_nz) > 0
-
-    non_zero_size = non_zeros.sum()
-
-    for v in values_lists:
-        if non_zero_size != v.data.shape[0]:
-            return True
-
-    return False
-
-
 def _validate_arrays(values_lists):
     t = values_lists[0]
     t_type = type(t)
-    if not isinstance(t, _sparse.csr_matrix) and not isinstance(t, _np.ndarray):
+    if not isinstance(t, _np.ndarray):
         raise ValueError(('The arrays must either be of type '
                           'scipy.sparse.csr_matrix or numpy.array'))
 
@@ -147,60 +131,17 @@ def _validate_arrays(values_lists):
                 raise ValueError(('The sparse matrix must have shape 1 row X N'
                                   ' columns'))
 
-    if isinstance(t, _sparse.csr_matrix):
-        if _needs_sparse_unification(values_lists):
-            raise ValueError(('The non-zero entries in the sparse arrays'
-                              ' must be aligned: see '
-                              'bootstrapped.unify_sparse_vectors function'))
-
 
 def _generate_distributions(values_lists, num_iterations):
-    if isinstance(values_lists[0], _sparse.csr_matrix):
-        # in the sparse case we dont actually need to bootstrap
-        # the full sparse array since most values are 0
-        # instead for each bootstrap iteration we:
-        #    1. generate B number of non-zero entries to sample from the
-        #          binomial distribution
-        #    2. resample with replacement the non-zero entries from values
-        #          B times
-        #    3. create a new sparse array with the B resamples, zero otherwise
-        results = [[] for _ in range(len(values_lists))]
+    values_shape = values_lists[0].shape[0]
+    ids = _np.random.choice(
+        values_shape,
+        (num_iterations, values_shape),
+        replace=True,
+    )
 
-        pop_size = values_lists[0].shape[1]
-        non_sparse_size = values_lists[0].data.shape[0]
-
-        p = non_sparse_size * 1.0 / pop_size
-
-        for _ in range(num_iterations):
-            ids = _np.random.choice(
-                non_sparse_size,
-                _np.random.binomial(pop_size, p),
-                replace=True,
-            )
-
-            for arr, values in zip(results, values_lists):
-                data = values.data
-                d = _sparse.csr_matrix(
-                    (
-                        data[ids],
-                        (_np.zeros_like(ids), _np.arange(len(ids)))
-                    ),
-                    shape=(1, pop_size),
-                )
-
-                arr.append(d)
-        return [_sparse.vstack(r) for r in results]
-
-    else:
-        values_shape = values_lists[0].shape[0]
-        ids = _np.random.choice(
-            values_shape,
-            (num_iterations, values_shape),
-            replace=True,
-        )
-
-        results = [values[ids] for values in values_lists]
-        return results
+    results = [values[ids] for values in values_lists]
+    return results
 
 
 def _bootstrap_sim(values_lists, stat_func_lists, num_iterations,
@@ -293,15 +234,17 @@ def _bootstrap_distribution(values_lists, stat_func_lists,
     return results
 
 
-def bootstrap(values, stat_func, alpha=0.05,
+def bootstrap(stat_func, sequence=None, attributes=None, alpha=0.05,
               num_iterations=1000, iteration_batch_size=10, is_pivotal=True,
               num_threads=1, return_distribution=False):
     '''Returns bootstrap estimate.
     Args:
-        values: numpy array of values to bootstrap
         stat_func: statistic to bootstrap. We provide several default functions:
             median_estimator
             method_of_moments_v3_estimator
+        sequence: sample sequence of integers
+        attributes: dictionary with keys as the unique elements and values as
+                        counts of those elements
         alpha: alpha value representing the confidence interval.
             Defaults to 0.05, i.e., 95th-CI.
         num_iterations: number of bootstrap iterations to run. The higher this
@@ -324,6 +267,19 @@ def bootstrap(values, stat_func, alpha=0.05,
     Returns:
         BootstrapResults representing CI and estimated value.
     '''
+    if sequence is None and attributes is None:
+        raise Exception("Must provide a sequence, or a dictionary of attribute counts ")
+
+    if attributes:
+        i = 0
+        values = []
+        for value in attributes.values():
+            create_list = [i, ] * value
+            values.extend(create_list)
+            i += 1
+        values = _np.random.permutation(values)
+    else:
+        values = sequence
 
     values_lists = [_np.asarray(values)]
     stat_func_lists = [stat_func]
