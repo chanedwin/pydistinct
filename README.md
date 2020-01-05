@@ -59,9 +59,9 @@ median_estimator(attributes=ecological_sample)
 
 # Using bootstrap module to generate CIs
 from pydistinct.bootstrap import bootstrap
-bootstrap(uniform["sample"],num_iterations=1000,iteration_batch_size=10,stat_func=median_estimator,alpha=0.05,is_pivotal=False)
+bootstrap(sequence=uniform["sample"],num_iterations=1000,iteration_batch_size=10,stat_func=median_estimator,alpha=0.05,is_pivotal=False)
 >>> 1013.1954292072005    (934.8627672053022, 1104.5740587473167)
-bootstrap(uniform["sample"],num_iterations=1000,iteration_batch_size=10,stat_func=smoothed_jackknife_estimator,alpha=0.05,is_pivotal=False)
+bootstrap(attributes=attrs,num_iterations=1000,iteration_batch_size=10,stat_func=smoothed_jackknife_estimator,alpha=0.05,is_pivotal=False)
 >>> 1027.041502241605    (933.3868405058629, 1122.4277049112984)
 
 # bootstrap is less precise with skewed distributions
