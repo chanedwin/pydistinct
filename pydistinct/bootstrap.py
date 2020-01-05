@@ -221,7 +221,7 @@ def _bootstrap_distribution(values_lists, stat_func_lists,
         iter_per_job = _np.ceil(num_iterations * 1.0 / num_threads)
 
         results = []
-        for seed in _np.random.randint(0, 2 ** 32 - 1, num_threads):
+        for seed in _np.random.randint(0, 2 ** 32 - 1, size=num_threads, dtype='uint64'):
             r = pool.apply_async(_bootstrap_sim, (values_lists, stat_func_lists,
                                                   iter_per_job,
                                                   iteration_batch_size, seed))

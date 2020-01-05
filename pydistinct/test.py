@@ -192,6 +192,11 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertAlmostEqual(unique_seq_bootstrap.value, 8)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound, 12.7987886114498)
 
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.unique_sequence, num_threads=2)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound, 3.1951544453993007)
+        self.assertAlmostEqual(unique_seq_bootstrap.value, 8)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound, 12.7987886114498)
+
         unique_seq_bootstrap = bootstrap(stat_func=median_estimator, attributes=self.uniform_sequence_attr)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 738.060609510319 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
@@ -201,6 +206,11 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 738.060609510319 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 866.5716408688647 / 1000, places=1)
+
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.uniform_sequence, is_pivotal=True)
+        self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 737.447733266203 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746544601 / 1000, places=1)
+        self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 860.3276446699972 / 1000, places=1)
 
         unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.gaussian_sequence)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 665.2778560102962 / 1000, places=1)
