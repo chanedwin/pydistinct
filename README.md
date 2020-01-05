@@ -47,6 +47,7 @@ smoothed_jackknife_estimator(uniform["sample"])
 >>> 1027.0415022416053
 
 # Using dictionary of attribute counts to do computation
+from pydistinct.utils import _get_attribute_counts
 attrs = _get_attribute_counts(uniform["sample"])
 print(attrs)
 >>> {1: 1, 2: 1, 5: 1, 6: 2 ...994: 1, 996: 1, 999: 1}
