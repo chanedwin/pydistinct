@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="pydistinct",
-    version="0.6.2",
+    version="0.6.3",
     author="Edwin Chan",
     author_email="edwinchan@u.nus.edu",
     description="Package for estimating distinct values in a population",
