@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/chanedwin/pydistinct.svg?branch=master)](https://travis-ci.org/chanedwin/pydistinct)
-[![Coverage Status](https://coveralls.io/repos/github/chanedwin/pydistinct/badge.svg?branch=master&serivce=github)](https://coveralls.io/github/chanedwin/pydistinct?branch=master&serivce=github)
+[![Coverage Status](https://coveralls.io/repos/github/chanedwin/pydistinct/badge.svg?branch=master)](https://coveralls.io/github/chanedwin/pydistinct?branch=master)
 
 https://pydistinct.readthedocs.io/
 
