@@ -187,6 +187,9 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertEqual(hybrid_estimator(cache=cached_data), 6.142856986848082)
 
     def test_bootstrap(self):
+        with self.assertRaises(Exception):
+            bootstrap(stat_func=median_estimator)
+
         unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.unique_sequence)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound, 3.1951544453993007)
         self.assertAlmostEqual(unique_seq_bootstrap.value, 8)
@@ -207,7 +210,7 @@ class TestEstimatorMethods(unittest.TestCase):
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746644601 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 866.5716408688647 / 1000, places=1)
 
-        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.uniform_sequence, is_pivotal=True)
+        unique_seq_bootstrap = bootstrap(stat_func=median_estimator, sequence=self.uniform_sequence, is_pivotal=False)
         self.assertAlmostEqual(unique_seq_bootstrap.lower_bound / 1000, 737.447733266203 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.value / 1000, 798.2153746544601 / 1000, places=1)
         self.assertAlmostEqual(unique_seq_bootstrap.upper_bound / 1000, 860.3276446699972 / 1000, places=1)
