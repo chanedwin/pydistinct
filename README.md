@@ -120,19 +120,19 @@ Suggested Estimators (See Usage)
 This package is based on work from [Haas et al, 1995](https://pdfs.semanticscholar.org/d26b/70479bc818ef7079732ba014e82368dbf66f.pdf) with estimators from Goodman (1949), Chao (1984), Chao and Lee (1992), Shlosser (1981), Sichel (1986a, 1986b and 1992), Smith and Van Bell (1984), Sarndal,
 Swensson, and Wretman (1992),
 
-* **goodmans_estimator** : Implementation of Goodman's estimator, unique unbiased estimator of D
-* **chao_estimator** : Implementation of Chao's estimator, using counts of values that appear exactly once and twice
+* **goodmans_estimator** : Implementation of Goodman estimator, unique unbiased estimator of D
+* **chao_estimator** : Implementation of Chao estimator, using counts of values that appear exactly once and twice (Chao1 unbias corrected estimator)
 * **jackknife_estimator** : Jackknife scheme for estimating D 
-* **chao_lee_estimator** : Implementation of Chao and Lee's estimator  using a natural estimator of coverage 
-* **shlossers_estimator** : Implementation of Shlosser's Estimator using a Bernoulli Sampling scheme
-* **sichel_estimator** : Implementation of Sichel’s Parametric Estimator which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
+* **chao_lee_estimator** : Implementation of Chao and Lee estimator using a natural estimator of coverage 
+* **shlossers_estimator** : Implementation of Shlosser Estimator using a Bernoulli Sampling scheme
+* **sichel_estimator** : Implementation of Sichel Parametric Estimator which uses a zero-truncated generalized inverse Gaussian-Poisson to estimate D
 * **method_of_moments_estimator** : Simple Method-of-Moments Estimator to estimate D 
 * **bootstrap_estimator** : Implementation of a bootstrap estimator to estimate D 
 * **horvitz_thompson_estimator** : Implementation of the Horvitz-Thompson Estimator to estimate D 
 * **method_of_moments_v2_estimator** : Method-of-Moments Estimator with equal frequency assumption while still sampling from a finite relation
 * **method_of_moments_v3_estimator** : Method-of-Moments Estimator without equal frequency assumption 
 * **smoothed_jackknife_estimator** : Jackknife scheme for estimating D that accounts for true bias structures 
-* **hybrid_estimator** : Hybrid Estimator that uses Shlosser's estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
+* **hybrid_estimator** : Hybrid Estimator that uses Shlosser estimator when data is skewed and Smooth jackknife estimator when data is not. Skew is computed by using an approximate chi square test for uniformity
 * **median_estimator** : takes median of 7 faster and generally more reliable estimators
 * **full_median_estimator** : takes median of all estimators, 10x slower than median_estimator
 
