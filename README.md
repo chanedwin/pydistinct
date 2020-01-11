@@ -121,7 +121,7 @@ This package is based on work from [Haas et al, 1995](https://pdfs.semanticschol
 Swensson, and Wretman (1992),
 
 * **goodmans_estimator** : Implementation of Goodman estimator, unique unbiased estimator of D
-* **chao_estimator** : Implementation of Chao estimator, using counts of values that appear exactly once and twice (Chao1 unbias corrected estimator)
+* **chao_estimator** : Implementation of Chao estimator, using counts of values that appear exactly once and twice (Chao1 estimator uncorrected)
 * **jackknife_estimator** : Jackknife scheme for estimating D 
 * **chao_lee_estimator** : Implementation of Chao and Lee estimator using a natural estimator of coverage 
 * **shlossers_estimator** : Implementation of Shlosser Estimator using a Bernoulli Sampling scheme
