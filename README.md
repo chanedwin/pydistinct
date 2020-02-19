@@ -9,12 +9,13 @@ The most useful and well-known algorithm for computing the cardinality of a popu
 
 Pydistinct is a library that allows you to compute the cardinality of a population from a small sample. It implements 15 statistical estimators from [Peter Haas et al. (1996)](https://pdfs.semanticscholar.org/d26b/70479bc818ef7079732ba014e82368dbf66f.pdf) in python that allows you to estimate, from just a small sample, the cardinality of the population.
 
+Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
+
+
 **Cited in** :
 
 Spang, B., & McKeown, N. [On estimating the number of flows](http://buffer-workshop.stanford.edu/papers/paper13.pdf), 2019. Workshop on Buffer Sizing, Stanford University.
 
-
-Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
 
 ## Installation
 
