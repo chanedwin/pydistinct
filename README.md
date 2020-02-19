@@ -12,7 +12,7 @@ Pydistinct is a library that allows you to compute the cardinality of a populati
 Please send all bugs reports/issues/queries to chanedwin91@gmail.com for fastest response! 
 
 
-**Cited in** :
+## Cited in :
 
 Spang, B., & McKeown, N. [On estimating the number of flows](http://buffer-workshop.stanford.edu/papers/paper13.pdf), 2019. Workshop on Buffer Sizing, Stanford University.
 
@@ -113,9 +113,6 @@ median_estimator(attributes=attrs)
 
 
 ```
-## Citation
-
-Citations
 
 ## Estimators available 
 
