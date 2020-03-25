@@ -16,6 +16,7 @@ import multiprocessing as _multiprocessing
 
 import numpy as _np
 import scipy.sparse as _sparse
+import pydistinct
 
 
 class BootstrapResults(object):
@@ -234,19 +235,16 @@ def _bootstrap_distribution(values_lists, stat_func_lists,
     return results
 
 
-def bootstrap(stat_func, sequence=None, attributes=None, alpha=0.05,
+def bootstrap(stat_func=pydistinct.stats_estimators.smoothed_jackknife_estimator, sequence=None, attributes=None,
+              alpha=0.05,
               num_iterations=1000, iteration_batch_size=10, is_pivotal=True,
               num_threads=1, return_distribution=False):
     '''Returns bootstrap estimate.
     Args:
-        stat_func: statistic to bootstrap. We provide several default functions:
-            median_estimator
-            method_of_moments_v3_estimator
+        stat_func: statistical estimator to use - good choices are median_estimator and smoothed_jackknife_estimator
         sequence: sample sequence of integers
-        attributes: dictionary with keys as the unique elements and values as
-                        counts of those elements
-        alpha: alpha value representing the confidence interval.
-            Defaults to 0.05, i.e., 95th-CI.
+        attributes: dictionary with keys as the unique elements and values as counts of those elements
+        alpha: alpha value representing the confidence interval. Defaults to 0.05, i.e., 95th-CI.
         num_iterations: number of bootstrap iterations to run. The higher this
             number the more sure you can be about the stability your bootstrap.
             By this - we mean the returned interval should be consistent across
