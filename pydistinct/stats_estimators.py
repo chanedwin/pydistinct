@@ -696,6 +696,9 @@ def smoothed_jackknife_estimator(sequence=None, attributes=None, pop_estimator=l
             return_sum += 1 / (n_pop - x - n + k)
         return return_sum
 
+    if 1 not in frequency_dictionary:
+        return d
+
     d_n = d
     d_sjk_zero_hat = (d_n - frequency_dictionary[1] / n) * (
             1 - (n_pop - n + 1) * frequency_dictionary[1] / (n * n_pop)) ** -1
