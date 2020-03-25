@@ -16,7 +16,7 @@ import multiprocessing as _multiprocessing
 
 import numpy as _np
 import scipy.sparse as _sparse
-import pydistinct
+from pydistinct.stats_estimators import smoothed_jackknife_estimator
 
 
 class BootstrapResults(object):
@@ -235,7 +235,7 @@ def _bootstrap_distribution(values_lists, stat_func_lists,
     return results
 
 
-def bootstrap(stat_func=pydistinct.stats_estimators.smoothed_jackknife_estimator, sequence=None, attributes=None,
+def bootstrap(stat_func=smoothed_jackknife_estimator, sequence=None, attributes=None,
               alpha=0.05,
               num_iterations=1000, iteration_batch_size=10, is_pivotal=True,
               num_threads=1, return_distribution=False):
